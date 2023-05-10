@@ -8,6 +8,9 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 find_package(SDL2_image REQUIRED)
 
+# add the emscripten.h /opt/homebrew/Cellar/emscripten/3.1.36/libexec/system/include/emscripten.h
+# include_directories(/opt/homebrew/Cellar/emscripten/3.1.36/libexec/system/include/emscripten/)
+
 # Search recursively for source files under src/ folder
 file(GLOB_RECURSE SOURCE_FILES "../src/*.cpp")
 

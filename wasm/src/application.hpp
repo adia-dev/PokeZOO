@@ -1,8 +1,11 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-// #include <emscripten.h>
 #include <stdio.h>
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 /**
  * Inverse square root of two, for normalising velocity
@@ -30,46 +33,51 @@ public:
     void run();
 
 private:
-    SDL_Renderer *renderer_;
+    SDL_Renderer *renderer;
 
     /**
      * Rectangle that the choso texture will be rendered into
      */
-    SDL_Rect dest_;
-    SDL_Texture *spritsheet_tex_;
+    SDL_Rect dest;
+    SDL_Texture *spritsheet_tex;
 
     /**
      * Font used to render the text
      * Textures are used to render text in SDL
      */
-    TTF_Font *font_;
-    SDL_Texture *text_tex_;
+    TTF_Font *font;
+    SDL_Texture *text_tex;
 
-    // enum input_state key_active_state_;
+    // enum input_state key_active_state;
     // use a uint8_t instead of enum to avoid
     // compiler warnings
-    uint8_t key_active_state_;
+    uint8_t key_active_state;
 
     /**
      * Position
      */
-    int pos_x_;
-    int pos_y_;
+    int pos_x;
+    int pos_y;
 
     /**
      * Current frame
      */
-    int frame_;
-    int frame_count_;
-    int frame_delay_;
-    int frame_timer_;
-    SDL_Rect frame_rect_;
+    int frame;
+    int frame_count;
+    int frame_delay;
+    int frame_timer;
+    SDL_Rect frame_rect;
 
     /**
      * Delta time
      */
-    int dt_;
-    int last_tick_;
+    int dt;
+    int last_tick;
+
+    /**
+     * Application running state
+     */
+    bool is_running;
 
     /**
      * Loads the choso texture into the context

@@ -32,6 +32,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  \
     -s \"EXPORTED_RUNTIME_METHODS=['ccall']\""
 )
 
+target_compile_definitions(out PUBLIC __EMSCRIPTEN__)
+
 add_custom_command(TARGET out POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:out> /Users/abdoulayedia/Projects/School/AL_2/NodeJS/PokeZOO/frontend/public/wasm
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/out.wasm /Users/abdoulayedia/Projects/School/AL_2/NodeJS/PokeZOO/frontend/public/wasm
