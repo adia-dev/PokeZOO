@@ -1,8 +1,8 @@
-#include <iostream>
-#include <emscripten.h>
+#include "application.hpp"
 
-extern "C" EMSCRIPTEN_KEEPALIVE void
-mainf()
+extern "C" EMSCRIPTEN_KEEPALIVE int mainf()
 {
-    std::cout << "Hello, world!" << std::endl;
+    Application app;
+    app.run();
+    return 0;
 }
