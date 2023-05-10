@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <emscripten.h>
+// #include <emscripten.h>
 #include <stdio.h>
 
 /**

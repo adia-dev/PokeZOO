@@ -24,16 +24,16 @@ void Application::run()
      * Schedule the main loop handler to get
      * called on each animation frame
      */
-    emscripten_set_main_loop_arg([](void *arg)
-                                 {
-    auto* ctx = static_cast<Application*>(arg);
-    ctx->loop_handler(); },
-                                 this, -1, 1);
+    // emscripten_set_main_loop_arg([](void *arg)
+    //                              {
+    // auto* ctx = static_cast<Application*>(arg);
+    // ctx->loop_handler(); },
+    //                              this, -1, 1);
 }
 
 int Application::init()
 {
-    SDL_Surface *image = IMG_Load("src/assets/images/characters_no_bg.png");
+    SDL_Surface *image = IMG_Load("../src/assets/images/characters_no_bg.png");
     if (!image)
     {
         printf("IMG_Load: %s\n", IMG_GetError());
@@ -55,8 +55,9 @@ int Application::init()
 
     last_tick_ = SDL_GetTicks();
 
-    font_ = TTF_OpenFont("src/assets/fonts/Roboto/Roboto-Regular.ttf", 24);
-    SDL_Surface *text_surface = TTF_RenderText_Solid(font_, "Choso Goat", {0, 0, 0, 255});
+    font_ = TTF_OpenFont("../src/assets/fonts/Roboto/Roboto-Regular.ttf", 24);
+    SDL_Color color = {0, 0, 0, 255};
+    SDL_Surface *text_surface = TTF_RenderText_Solid(font_, "Choso Goat", color);
     if (!text_surface)
     {
         printf("TTF_RenderText_Solid: %s\n", TTF_GetError());
