@@ -1,0 +1,17 @@
+{
+  "name": "pokezoo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build.frontend": "cd frontend && npm run build",
+    "build.wasm": "cd wasm && make",
+    "start.api": "cd api && npm start",
+    "start.frontend": "cd frontend && npm start",
+    "start": "concurrently --kill-others \"npm run start.api\" \"npm run start.frontend\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
