@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.heex": "phoenix-heex",
+        ".env.template": "env",
+        ".env": "env",
+        "*.js": "javascript",
+        "*.my": "rust",
+        "*.palang": "rust",
+        "iostream": "cpp"
+    }
+}
