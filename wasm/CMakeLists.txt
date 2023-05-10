@@ -33,7 +33,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  \
 )
 
 add_custom_command(TARGET out POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:out> ${CMAKE_BINARY_DIR}/../../shared/
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/out.wasm ${CMAKE_BINARY_DIR}/../../shared/
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/out.data ${CMAKE_BINARY_DIR}/../../shared/
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:out> /Users/abdoulayedia/Projects/School/AL_2/NodeJS/PokeZOO/frontend/public/wasm
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/out.wasm /Users/abdoulayedia/Projects/School/AL_2/NodeJS/PokeZOO/frontend/public/wasm
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/out.data /Users/abdoulayedia/Projects/School/AL_2/NodeJS/PokeZOO/frontend/public/wasm
 )
