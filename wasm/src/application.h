@@ -53,6 +53,7 @@ class Application {
 	/**
 	 * Methods for handling events and input
 	 */
+	void on_loop_start();
 	void handle_events();
 	void handle_input();
 	void handle_key_down(SDL_Keycode key);

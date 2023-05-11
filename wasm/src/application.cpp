@@ -1,5 +1,7 @@
 #include "application.h"
 
+#include "input_handler.h"
+
 Application::Application() {}
 
 Application::~Application() {
@@ -107,23 +109,23 @@ void Application::handle_events() {
 	}
 }
 
-void Application::handle_input() {
-	const Uint8 *state = SDL_GetKeyboardState(NULL);
-
-	for (int i = 0; i < 512; i++) {
-		if (state[i]) {
-			printf("%d\n", i);
-		}
-	}
+void Application::on_loop_start() {
+	InputHandler::update_key_states();
 }
+
+void Application::handle_input() {}
 
 void Application::handle_key_down(SDL_Keycode key) {
 	if (key == SDLK_ESCAPE) {
 		quit();
 	}
+
+	InputHandler::set_key_state(key, InputHandler::is_key_pressed(key) ? KeyState::DOWN : KeyState::PRESSED);
 }
 
-void Application::handle_key_up(SDL_Keycode key) {}
+void Application::handle_key_up(SDL_Keycode key) {
+	InputHandler::set_key_state(key, KeyState::RELEASED);
+}
 
 void Application::update_delta_time() {
 	int current_time = SDL_GetTicks();
@@ -131,7 +133,15 @@ void Application::update_delta_time() {
 	_last_frame_time = current_time;
 }
 
-void Application::update() {}
+void Application::update() {
+	for (auto [code, state] : InputHandler::get_key_states()) {
+		if (state == KeyState::PRESSED) {
+			printf("%s: %s\n",
+			       InputHandler::key_code_to_string(code).c_str(),
+			       InputHandler::key_state_to_string(state).c_str());
+		}
+	}
+}
 
 void Application::render() {
 	if (_renderer == nullptr || _window == nullptr) {
