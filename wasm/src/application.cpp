@@ -29,6 +29,17 @@ int Application::run()
         return 1;
     }
 
+#ifdef __EMSCRIPTEN__
+    emscripten_set_main_loop_arg([](void *arg)
+                                 {
+    Application* app = static_cast<Application*>(arg);
+        app->handle_events();
+        app->handle_input();
+        app->update_delta_time();
+        app->update();
+        app->render(); },
+                                 app.get(), -1, 1);
+#else
     while (app->_running)
     {
         app->handle_events();
@@ -37,6 +48,9 @@ int Application::run()
         app->update();
         app->render();
     }
+#endif
+
+    printf("Application exited successfully\n");
 
     return 0;
 }
@@ -44,41 +58,32 @@ int Application::run()
 bool Application::init()
 {
 
-    _window = std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>(
-        SDL_CreateWindow("SDL2 Boilerplate", SDL_WINDOWPOS_CENTERED,
-                         SDL_WINDOWPOS_CENTERED, 640, 480, 0),
-        SDL_DestroyWindow);
+    SDL_CreateWindowAndRenderer(640, 480, 0, (SDL_Window **)&_window, (SDL_Renderer **)&_renderer);
 
-    if (_window == nullptr)
+    if (_window == nullptr || _renderer == nullptr)
     {
-        SDL_Log("Failed to create window: %s", SDL_GetError());
-        return false;
-    }
-
-    _renderer = std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)>(
-        SDL_CreateRenderer(_window.get(), -1,
-                           SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC),
-        SDL_DestroyRenderer);
-
-    if (_renderer == nullptr)
-    {
-        SDL_Log("Failed to create renderer: %s", SDL_GetError());
+        printf("Failed to create window and renderer: %s\n", SDL_GetError());
+        SDL_Log("Failed to create window and renderer: %s", SDL_GetError());
         return false;
     }
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
+        printf("Failed to initialise SDL: %s\n", SDL_GetError());
         SDL_Log("Failed to initialise SDL: %s", SDL_GetError());
         return false;
     }
 
     if (TTF_Init() != 0)
     {
+        printf("Failed to initialise SDL_ttf: %s\n", SDL_GetError());
         SDL_Log("Failed to initialise SDL_ttf: %s", SDL_GetError());
         return false;
     }
 
     _running = true;
+
+    printf("SDL initialised successfully\n");
 
     return true;
 }

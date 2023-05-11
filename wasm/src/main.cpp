@@ -3,8 +3,12 @@
 #ifdef __EMSCRIPTEN__
 extern "C" EMSCRIPTEN_KEEPALIVE int mainf()
 {
-    Application app;
-    app.run();
+    if (Application::run() != 0)
+    {
+        printf("Application failed to run\n");
+        return 1;
+    }
+
     return 0;
 }
 #else
