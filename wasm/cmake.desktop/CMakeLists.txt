@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(app)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 # Find SDL2, SDL2_ttf, and SDL2_image libraries
 find_package(SDL2 REQUIRED)

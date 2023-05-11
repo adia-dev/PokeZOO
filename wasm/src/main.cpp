@@ -8,10 +8,15 @@ extern "C" EMSCRIPTEN_KEEPALIVE int mainf()
     return 0;
 }
 #else
+
 int main()
 {
-    Application app;
-    app.run();
+    if (Application::run() != 0)
+    {
+        printf("Application failed to run\n");
+        return 1;
+    }
+
     return 0;
 }
 #endif

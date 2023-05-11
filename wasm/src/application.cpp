@@ -1,82 +1,91 @@
 #include "application.hpp"
 
-void Application::run()
+Application::Application() {}
+
+Application::~Application()
 {
-    SDL_Window *window;
+    //? NOTE: window and renderer are smart pointers, so they will be destroyed automatically
 
-    SDL_Init(SDL_INIT_VIDEO);
-    TTF_Init();
-    SDL_CreateWindowAndRenderer(600, 400, 0, &window, &renderer);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-    if (init() == 0)
-    {
-        printf("Failed to initialize the context\n");
-        return;
-    }
-    key_active_state = NOTHING_PRESSED;
-    dest.x = 200;
-    dest.y = 100;
-    pos_x = 0;
-    pos_y = 0;
-
-    /**
-     * Schedule the main loop handler to get
-     * called on each animation frame
-     */
-#ifdef __EMSCRIPTEN__
-    emscripten_set_main_loop_arg([](void *arg)
-                                 {
-    auto* ctx = static_cast<Application*>(arg);
-    ctx->loop_handler(); },
-                                 this, -1, 1);
-#else
-    while (is_running)
-    {
-        loop_handler();
-    }
-#endif
+    SDL_Quit();
+    TTF_Quit();
 }
 
-int Application::init()
+int Application::run()
 {
-    SDL_Surface *image = IMG_Load("../src/assets/images/characters_no_bg.png");
-    if (!image)
+    std::shared_ptr<Application> app = instance();
+
+    if (app == nullptr)
     {
-        printf("IMG_Load: %s\n", IMG_GetError());
-        return 0;
-    }
-    spritsheet_tex = SDL_CreateTextureFromSurface(renderer, image);
-    dest.w = image->w;
-    dest.h = image->h;
-
-    frame_rect.w = 32;
-    frame_rect.h = 32;
-    frame_rect.x = 0;
-    frame_rect.y = 0;
-
-    frame = 0;
-    frame_count = 3;
-    frame_delay = 100;
-    frame_timer = 0;
-
-    last_tick = SDL_GetTicks();
-
-    font = TTF_OpenFont("../src/assets/fonts/Roboto/Roboto-Regular.ttf", 24);
-    SDL_Color color = {0, 0, 0, 255};
-    SDL_Surface *text_surface = TTF_RenderText_Solid(font, "Choso Goat", color);
-    if (!text_surface)
-    {
-        printf("TTF_RenderText_Solid: %s\n", TTF_GetError());
-        return 0;
+        return 1;
     }
 
-    text_tex = SDL_CreateTextureFromSurface(renderer, text_surface);
+    if (!app->init())
+    {
+        return 1;
+    }
 
-    SDL_FreeSurface(image);
-    SDL_FreeSurface(text_surface);
+    if (!app->load_assets())
+    {
+        return 1;
+    }
 
-    return 1;
+    while (app->_running)
+    {
+        app->handle_events();
+        app->handle_input();
+        app->update_delta_time();
+        app->update();
+        app->render();
+    }
+
+    return 0;
+}
+
+bool Application::init()
+{
+
+    _window = std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>(
+        SDL_CreateWindow("SDL2 Boilerplate", SDL_WINDOWPOS_CENTERED,
+                         SDL_WINDOWPOS_CENTERED, 640, 480, 0),
+        SDL_DestroyWindow);
+
+    if (_window == nullptr)
+    {
+        SDL_Log("Failed to create window: %s", SDL_GetError());
+        return false;
+    }
+
+    _renderer = std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)>(
+        SDL_CreateRenderer(_window.get(), -1,
+                           SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC),
+        SDL_DestroyRenderer);
+
+    if (_renderer == nullptr)
+    {
+        SDL_Log("Failed to create renderer: %s", SDL_GetError());
+        return false;
+    }
+
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    {
+        SDL_Log("Failed to initialise SDL: %s", SDL_GetError());
+        return false;
+    }
+
+    if (TTF_Init() != 0)
+    {
+        SDL_Log("Failed to initialise SDL_ttf: %s", SDL_GetError());
+        return false;
+    }
+
+    _running = true;
+
+    return true;
+}
+
+bool Application::load_assets()
+{
+    return true;
 }
 
 void Application::handle_events()
@@ -85,112 +94,70 @@ void Application::handle_events()
 
     while (SDL_PollEvent(&event))
     {
-
-        if (event.type == SDL_QUIT)
+        switch (event.type)
         {
-            is_running = false;
+        case SDL_QUIT:
+            quit();
             break;
-        }
-
-        switch (event.key.keysym.sym)
-        {
-        case SDLK_UP:
-            if (event.key.type == SDL_KEYDOWN)
-                key_active_state |= static_cast<input_state>(UP_PRESSED);
-            else if (event.key.type == SDL_KEYUP)
-                key_active_state ^= static_cast<input_state>(UP_PRESSED);
+        case SDL_KEYDOWN:
+            handle_key_down(event.key.keysym.sym);
             break;
-        case SDLK_DOWN:
-            if (event.key.type == SDL_KEYDOWN)
-                key_active_state |= static_cast<input_state>(DOWN_PRESSED);
-            else if (event.key.type == SDL_KEYUP)
-                key_active_state ^= static_cast<input_state>(DOWN_PRESSED);
-            break;
-        case SDLK_LEFT:
-            if (event.key.type == SDL_KEYDOWN)
-                key_active_state |= static_cast<input_state>(LEFT_PRESSED);
-            else if (event.key.type == SDL_KEYUP)
-                key_active_state ^= static_cast<input_state>(LEFT_PRESSED);
-            break;
-        case SDLK_RIGHT:
-            if (event.key.type == SDL_KEYDOWN)
-                key_active_state |= static_cast<input_state>(RIGHT_PRESSED);
-            else if (event.key.type == SDL_KEYUP)
-                key_active_state ^= (enum input_state)(RIGHT_PRESSED);
-            break;
-        case SDLK_ESCAPE:
-            is_running = false;
-            break;
-        default:
+        case SDL_KEYUP:
+            handle_key_up(event.key.keysym.sym);
             break;
         }
     }
 }
 
-void Application::loop_handler()
+void Application::handle_input()
 {
-    dt = SDL_GetTicks() - last_tick;
+    const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-    int vx = 0;
-    int vy = 0;
-
-    key_active_state = NOTHING_PRESSED;
-    handle_events();
-
-    dest.x += pos_x;
-    dest.y += pos_y;
-
-    SDL_Rect text_dest = {dest.x, dest.y - 30, 100, 30};
-
-    frame_timer += dt;
-    if (frame_timer > frame_delay)
+    for (int i = 0; i < 512; i++)
     {
-        frame_timer = 0;
-        frame++;
-        if (frame >= frame_count)
+        if (state[i])
         {
-            frame = 0;
+            printf("%d\n", i);
         }
-        frame_rect.x = frame_rect.w * frame;
     }
-
-    last_tick = SDL_GetTicks();
-
-    // move the destination rect
-    if (key_active_state & UP_PRESSED)
-    {
-        vy -= 1;
-    }
-    if (key_active_state & DOWN_PRESSED)
-    {
-        vy += 1;
-    }
-    if (key_active_state & LEFT_PRESSED)
-    {
-        vx -= 1;
-    }
-    if (key_active_state & RIGHT_PRESSED)
-    {
-        vx += 1;
-    }
-
-    if (vx != 0 || vy != 0)
-    {
-        pos_x = vx;
-        pos_y = vy;
-    }
-
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, spritsheet_tex, &frame_rect, &dest);
-    SDL_RenderCopy(renderer, text_tex, NULL, &text_dest);
-    SDL_RenderPresent(renderer);
 }
 
-Application::~Application()
+void Application::handle_key_down(SDL_Keycode key)
 {
-    SDL_DestroyTexture(spritsheet_tex);
-    SDL_DestroyTexture(text_tex);
-    SDL_DestroyRenderer(renderer);
-    SDL_Quit();
-    TTF_Quit();
+    if (key == SDLK_ESCAPE)
+    {
+        quit();
+    }
+}
+
+void Application::handle_key_up(SDL_Keycode key) {}
+
+void Application::update_delta_time()
+{
+    int current_time = SDL_GetTicks();
+    _delta_time = (current_time - _last_frame_time) / 1000.0f;
+    _last_frame_time = current_time;
+}
+
+void Application::update() {}
+
+void Application::render()
+{
+    if (_renderer == nullptr || _window == nullptr)
+    {
+        return;
+    }
+
+    SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
+    SDL_RenderClear(_renderer.get());
+    SDL_RenderPresent(_renderer.get());
+}
+
+void Application::render_text(const char *text, int x, int y, int size)
+{
+}
+
+void Application::quit()
+{
+    _running = false;
 }
