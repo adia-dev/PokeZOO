@@ -1,0 +1,27 @@
+{
+  "name": "file_watcher",
+  "version": "1.0.0",
+  "description": "",
+  "exports": "./dist/index.js",
+  "scripts": {
+    "start": "pnpm run build && node dist/index.js",
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.1.2",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "child_process": "^1.0.2",
+    "chokidar": "^3.5.3",
+    "commander": "^10.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
