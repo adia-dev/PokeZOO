@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { start_watching } from './bombastic_side_eye';
+import { start_watching } from './bombastic_side_eye.js';
 
 const program = new Command();
 let exclude_patterns: RegExp[] = [];
@@ -33,7 +33,10 @@ program
     .option('-q --quiet', 'Quiet output')
     .option('--fire-on-start', 'Fire the command when the watcher starts')
     .action((directory_to_watch: string, options: any) => {
-        if (!options.command) throw new Error('Command to run is required');
+        if (!options.command) {
+            console.log('\x1b[31m', 'No command specified, exiting gracefully\x1b[0m');
+            process.exit(0);
+        }
         exclude_patterns = options?.exclude?.map((pattern: string) => new RegExp(pattern));
         start_watching(directory_to_watch, options.command, exclude_patterns, options);
     });

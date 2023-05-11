@@ -1,0 +1,29 @@
+#include "asset_manager.h"
+
+#include "application.h"
+
+#include <stdexcept>
+
+AssetManager::AssetManager() {}
+
+AssetManager::~AssetManager() {}
+
+SDL_Texture &AssetManager::get_texture(const std::string &path) {
+	auto &textureMap = AssetManager::Get()._textureMap;
+	if (textureMap.find(path) == textureMap.end()) {
+		SDL_Surface *surface = IMG_Load(path.c_str());
+		if (surface == nullptr) {
+			throw std::runtime_error("Failed to load image: " + path);
+		}
+
+		SDL_Texture *texture = SDL_CreateTextureFromSurface(Application::get_renderer(), surface);
+		if (texture == nullptr) {
+			throw std::runtime_error("Failed to create texture from surface: " + path);
+		}
+
+		textureMap[path] = texture;
+		SDL_FreeSurface(surface);
+	}
+
+	return *textureMap[path];
+}

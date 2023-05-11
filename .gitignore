@@ -130,3 +130,5 @@ Temporary Items
 # End of https://www.toptal.com/developers/gitignore/api/c,c++,macos,visualstudiocode,webassembly
 
 shared/
+tooling/file_watcher/build/bombastic_side_eye.js
+tooling/file_watcher/build/index.js
