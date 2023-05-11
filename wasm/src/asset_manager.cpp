@@ -9,7 +9,12 @@ AssetManager::AssetManager() {}
 AssetManager::~AssetManager() {}
 
 SDL_Texture &AssetManager::get_texture(const std::string &path) {
-	auto &textureMap = AssetManager::Get()._textureMap;
+	load_texture(path);
+	return *(AssetManager::get())._textureMap[path];
+}
+
+bool AssetManager::load_texture(const std::string &path) {
+	auto &textureMap = AssetManager::get()._textureMap;
 	if (textureMap.find(path) == textureMap.end()) {
 		SDL_Surface *surface = IMG_Load(path.c_str());
 		if (surface == nullptr) {
@@ -25,5 +30,5 @@ SDL_Texture &AssetManager::get_texture(const std::string &path) {
 		SDL_FreeSurface(surface);
 	}
 
-	return *textureMap[path];
+	return true;
 }

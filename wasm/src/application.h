@@ -1,5 +1,6 @@
+#pragma once
 
-#include "asset_manager.h"
+#include "sprite.h"
 
 #ifdef __EMSCRIPTEN__
 #	include <emscripten.h>
@@ -32,6 +33,10 @@ class Application {
 	static SDL_Window   *get_window() { return instance()->_window.get(); }
 	static SDL_Renderer *get_renderer() { return instance()->_renderer.get(); }
 
+	static std::vector<std::unique_ptr<Sprite>> &get_entities() { return instance()->_sprites; }
+
+	static void add_entity(const Sprite &sprite);
+
   private:
 	/**
 	 *  Singleton Instance
@@ -49,6 +54,11 @@ class Application {
 	 */
 	bool init();
 	bool load_assets();
+
+	/**
+	 * Methods for initialising entities
+	 */
+	bool init_entities();
 
 	/**
 	 * Methods for handling events and input
@@ -74,9 +84,11 @@ class Application {
 	/**
 	 * Game state
 	 */
-	bool _running         = false;
-	int  _width           = 1920;
-	int  _height          = 1080;
-	int  _last_frame_time = 0;
-	int  _delta_time      = 0;
+	bool                                 _running         = false;
+	int                                  _width           = 1920;
+	int                                  _height          = 1080;
+	int                                  _last_frame_time = 0;
+	int                                  _delta_time      = 0;
+	std::vector<std::unique_ptr<Sprite>> _sprites;
+	std::unique_ptr<Sprite>              _player = nullptr;
 };
