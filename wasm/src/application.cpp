@@ -146,6 +146,7 @@ bool Application::init_entities() {
 	Animation idle_left_animation  = Animation("idle_left", {0, 64, 32, 32}, 1, 1);
 	Animation idle_right_animation = Animation("idle_right", {0, 96, 32, 32}, 1, 1);
 
+	// WALK
 	std::vector<AnimationFrame> walk_up_frames;
 	walk_up_frames.push_back(AnimationFrame({32, 0, 32, 32}, 100));
 	walk_up_frames.push_back(AnimationFrame({0, 0, 32, 32}, 100));
@@ -174,6 +175,35 @@ bool Application::init_entities() {
 	walk_right_frames.push_back(AnimationFrame({0, 96, 32, 32}, 100));
 	Animation walk_right_animation = Animation("walk_right", walk_right_frames, AnimationDirection::LOOP);
 
+	// RUN
+	std::vector<AnimationFrame> run_up_frames;
+	run_up_frames.push_back(AnimationFrame({140, 0, 32, 32}, 100));
+	run_up_frames.push_back(AnimationFrame({108, 0, 32, 32}, 100));
+	run_up_frames.push_back(AnimationFrame({172, 0, 32, 32}, 100));
+	run_up_frames.push_back(AnimationFrame({108, 0, 32, 32}, 100));
+	Animation run_up_animation = Animation("run_up", run_up_frames, AnimationDirection::LOOP);
+
+	std::vector<AnimationFrame> run_down_frames;
+	run_down_frames.push_back(AnimationFrame({140, 32, 32, 32}, 100));
+	run_down_frames.push_back(AnimationFrame({108, 32, 32, 32}, 100));
+	run_down_frames.push_back(AnimationFrame({172, 32, 32, 32}, 100));
+	run_down_frames.push_back(AnimationFrame({108, 32, 32, 32}, 100));
+	Animation run_down_animation = Animation("run_down", run_down_frames, AnimationDirection::LOOP);
+
+	std::vector<AnimationFrame> run_left_frames;
+	run_left_frames.push_back(AnimationFrame({140, 64, 32, 32}, 100));
+	run_left_frames.push_back(AnimationFrame({108, 64, 32, 32}, 100));
+	run_left_frames.push_back(AnimationFrame({172, 64, 32, 32}, 100));
+	run_left_frames.push_back(AnimationFrame({108, 64, 32, 32}, 100));
+	Animation run_left_animation = Animation("run_left", run_left_frames, AnimationDirection::LOOP);
+
+	std::vector<AnimationFrame> run_right_frames;
+	run_right_frames.push_back(AnimationFrame({140, 96, 32, 32}, 100));
+	run_right_frames.push_back(AnimationFrame({108, 96, 32, 32}, 100));
+	run_right_frames.push_back(AnimationFrame({172, 96, 32, 32}, 100));
+	run_right_frames.push_back(AnimationFrame({108, 96, 32, 32}, 100));
+	Animation run_right_animation = Animation("run_right", run_right_frames, AnimationDirection::LOOP);
+
 	_player->get_animation_controller().add_animation("idle_up", idle_up_animation);
 	_player->get_animation_controller().add_animation("idle_down", idle_down_animation);
 	_player->get_animation_controller().add_animation("idle_left", idle_left_animation);
@@ -184,7 +214,12 @@ bool Application::init_entities() {
 	_player->get_animation_controller().add_animation("walk_left", walk_left_animation);
 	_player->get_animation_controller().add_animation("walk_right", walk_right_animation);
 
-	_player->get_animation_controller().play("walk_right");
+	_player->get_animation_controller().add_animation("run_up", run_up_animation);
+	_player->get_animation_controller().add_animation("run_down", run_down_animation);
+	_player->get_animation_controller().add_animation("run_left", run_left_animation);
+	_player->get_animation_controller().add_animation("run_right", run_right_animation);
+
+	_player->get_animation_controller().play("idle_down");
 
 	_player->set_position(1920 / 2 - 16, 1080 / 2 - 16);
 
@@ -212,10 +247,12 @@ void Application::handle_input() {
 	std::string animation_prefix =
 	    input_direction.magnitude() > 0.1f ? InputHandler::is_key_down(SDLK_LSHIFT) ? "run_" : "walk_" : "idle_";
 
+	float speed = InputHandler::is_key_down(SDLK_LSHIFT) ? 250.f : 150.f;
+
 	if (input_direction.magnitude() > 0.1f) {
 		_player->get_animation_controller().play(
 		    animation_prefix + StringUtils::to_lower(InputHandler::direction_to_string(player_direction)));
-		_player->move(input_direction.x * _delta_time * 300.f, input_direction.y * _delta_time * 300.f);
+		_player->move(input_direction.x * _delta_time * speed, input_direction.y * _delta_time * speed);
 	} else {
 		_player->get_animation_controller().play(
 		    animation_prefix + StringUtils::to_lower(InputHandler::direction_to_string(_player->get_direction())));

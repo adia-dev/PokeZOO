@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<animations texture="../../images/characters_no_bg.png">
+    <animation
+        direction="forward"
+        name="idle"
+        axis_oriented="true"
+        start_x="0"
+        start_y="0"
+        width="32"
+        height="32"
+        frames="1"
+    />
+</animations>

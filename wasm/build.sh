@@ -30,6 +30,15 @@ while [[ $# -gt 0 ]]; do
     --rm)
         CLEAN_BUILD=true
         ;;
+
+    --deploy)
+        if [[ "$CMAKE_DIR" == "cmake.desktop" ]]; then
+          echo "Cannot deploy an SDL executable project, run with --wasm argument."
+          exit 1
+        else
+          SHOULD_DEPLOY=true
+        fi
+        ;;
     *)
         echo "Invalid argument: $1"
         exit 1
@@ -76,4 +85,9 @@ fi
 if [ "$RUN_PROJECT" = true ]; then
     cd "$BUILD_DIR"
     ./app
+fi
+
+if [ "$SHOULD_DEPLOY" = true ]; then
+    cd ../frontend
+    fly deploy
 fi
