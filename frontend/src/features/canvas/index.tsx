@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type Props = {}
 
-const Canvas = (props: Props) => {
+const Canvas = (_props: Props) => {
 
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const [attempts, setAttempts] = useState(0)
