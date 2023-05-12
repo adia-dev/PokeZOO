@@ -47,11 +47,11 @@ class AnimationController {
 
 	friend std::ostream& operator<<(std::ostream& os, const AnimationController& controller) {
 		os << "{\n";
-		os << "  \"animations\": {\n";
-		for (auto it = controller._animations.begin(); it != controller._animations.end(); ++it) {
-			os << "    \"" << it->first << "\": " << it->second << ",\n";
-		}
-		os << "  },\n";
+		// os << "  \"animations\": [\n";
+		// for (auto it = controller._animations.begin(); it != controller._animations.end(); ++it) {
+		// 	os << "    \"" << it->first << "\": " << it->second << ",\n";
+		// }
+		// os << "  ],\n";
 		os << "  \"current_animation_name\": \"" << controller._current_animation_name << "\",\n";
 		os << "  \"speed\": " << std::setprecision(2) << std::fixed << controller.speed << ",\n";
 		os << "  \"current_frame_index\": " << controller.current_frame_index << ",\n";
@@ -65,7 +65,7 @@ class AnimationController {
 	std::map<std::string, Animation> _animations;
 	std::string                      _current_animation_name;
 
-	float speed               = 1.0f;
+	float speed               = 1000.0f;
 	int   current_frame_index = 0;
 	float _timer              = 0.0f;
 	bool  _is_playing         = false;

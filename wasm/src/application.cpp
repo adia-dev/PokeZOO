@@ -1,7 +1,5 @@
 #include "application.h"
 
-#include "input_handler.h"
-
 Application::Application() {}
 
 Application::~Application() {
@@ -205,39 +203,26 @@ void Application::on_loop_start() {
 }
 
 void Application::handle_input() {
-	if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_LEFT)) {
-		_player->move(-250.f * Application::get_delta_time(), 0);
-		_player->set_direction(Direction::LEFT);
-		_player->get_animation_controller().play("walk_left");
-	} else if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_RIGHT)) {
-		_player->move(250.f * Application::get_delta_time(), 0);
+	auto input_direction = InputHandler::get_key_direction();
+
+	// set the player's direction
+	if (input_direction.x > 0) {
 		_player->set_direction(Direction::RIGHT);
-		_player->get_animation_controller().play("walk_right");
-	} else if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_UP)) {
-		_player->move(0, -250.f * Application::get_delta_time());
-		_player->set_direction(Direction::UP);
-		_player->get_animation_controller().play("walk_up");
-	} else if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_DOWN)) {
-		_player->move(0, 250.f * Application::get_delta_time());
+	} else if (input_direction.x < 0) {
+		_player->set_direction(Direction::LEFT);
+	} else if (input_direction.y > 0) {
 		_player->set_direction(Direction::DOWN);
-		_player->get_animation_controller().play("walk_down");
+	} else if (input_direction.y < 0) {
+		_player->set_direction(Direction::UP);
+	}
+
+	if (input_direction.magnitude() > 0.1f) {
+		_player->get_animation_controller().play(
+		    "walk_" + StringUtils::to_lower(InputHandler::direction_to_string(_player->get_direction())));
+		_player->move(input_direction.x * _delta_time * 300.f, input_direction.y * _delta_time * 300.f);
 	} else {
-		switch (_player->get_direction()) {
-			case Direction::UP:
-				_player->get_animation_controller().play("idle_up");
-				break;
-			case Direction::DOWN:
-				_player->get_animation_controller().play("idle_down");
-				break;
-			case Direction::LEFT:
-				_player->get_animation_controller().play("idle_left");
-				break;
-			case Direction::RIGHT:
-				_player->get_animation_controller().play("idle_right");
-				break;
-			default:
-				break;
-		}
+		_player->get_animation_controller().play(
+		    "idle_" + StringUtils::to_lower(InputHandler::direction_to_string(_player->get_direction())));
 	}
 }
 
@@ -302,7 +287,8 @@ void Application::render() {
 	// write the delta time to the screen
 	std::stringstream ss;
 	ss << "Delta Time: " << _delta_time << " FPS: " << 1.0f / _delta_time << std::endl
-	   << "Inputs: " << InputHandler::get();
+	   << "Inputs: " << InputHandler::get() << std::endl
+	   << "Player Animation Controller: " << _player->get_animation_controller();
 
 	SDL_Color    color = {255, 255, 255, 255};
 	SDL_Surface *surface =

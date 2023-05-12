@@ -4,8 +4,6 @@
 
 #include <functional>
 
-enum class Direction { UP, DOWN, LEFT, RIGHT };
-
 class Sprite {
   public:
 	Sprite(SDL_Texture& texture, const SDL_Rect& frame_rect, const SDL_Rect& world_rect);

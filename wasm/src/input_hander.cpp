@@ -15,6 +15,30 @@ void InputHandler::update_key_states() {
 				break;
 		}
 	}
+
+	// update key direction
+	Vector2f desired_direction = Vector2f::zero();
+	if (is_key_down(SDLK_w) || is_key_down(SDLK_UP)) {
+		desired_direction.y -= 1;
+	}
+	if (is_key_down(SDLK_s) || is_key_down(SDLK_DOWN)) {
+		desired_direction.y += 1;
+	}
+	if (is_key_down(SDLK_a) || is_key_down(SDLK_LEFT)) {
+		desired_direction.x -= 1;
+	}
+	if (is_key_down(SDLK_d) || is_key_down(SDLK_RIGHT)) {
+		desired_direction.x += 1;
+	}
+	desired_direction    = desired_direction.normalized();
+	get()._key_direction = get()._key_direction.lerp(desired_direction, 0.2f);
+	if (get()._key_direction.magnitude() < 0.1f) {
+		get()._key_direction = Vector2f::zero();
+	}
+}
+
+Vector2f InputHandler::get_key_direction() {
+	return get()._key_direction;
 }
 
 std::string InputHandler::input_state_to_string(InputState state) {
@@ -284,6 +308,36 @@ std::string InputHandler::key_code_to_string(int code) {
 	}
 
 	return key_code_to_string_map[code];
+}
+
+std::string InputHandler::direction_to_string(const Direction& direction) {
+	switch (direction) {
+		case Direction::UP:
+			return "UP";
+		case Direction::DOWN:
+			return "DOWN";
+		case Direction::LEFT:
+			return "LEFT";
+		case Direction::RIGHT:
+			return "RIGHT";
+		default:
+			return "UNKNOWN";
+	}
+}
+
+Vector2f InputHandler::direction_to_vector(const Direction& direction) {
+	switch (direction) {
+		case Direction::UP:
+			return Vector2f::up();
+		case Direction::DOWN:
+			return Vector2f::down();
+		case Direction::LEFT:
+			return Vector2f::left();
+		case Direction::RIGHT:
+			return Vector2f::right();
+		default:
+			return Vector2f::zero();
+	}
 }
 
 void InputHandler::update_mouse_states() {

@@ -66,9 +66,10 @@ fi
 
 # Check for errors
 if [ $? -eq 0 ]; then
-    echo -e "\033[0;32mBuild succeeded!\033[0m"
+    echo "\033[0;32mBuild succeeded!\033[0m"
 else
-    echo -e "\033[0;31mBuild failed.\033[0m"
+    echo "\033[0;31mBuild failed.\033[0m"
+    exit 1
 fi
 
 # Run the project if requested

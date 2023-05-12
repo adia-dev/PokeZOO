@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "asset_manager.h"
+#include "utils.h"
 
 enum class InputState {
 	NOT_PRESSED,
@@ -18,6 +18,8 @@ enum class MouseButton {
 	MIDDLE,
 	RIGHT,
 };
+
+enum class Direction { UP, DOWN, LEFT, RIGHT };
 
 template<typename T>
 class Vector2 {
@@ -35,10 +37,51 @@ class Vector2 {
 
 	Vector2<T> normalized() const {
 		T mag = magnitude();
-		return Vector2f(x / mag, y / mag);
+		if (mag == 0.0f) return zero();
+		return Vector2<T>(x / mag, y / mag);
+	}
+
+	T dot(const Vector2<T>& other) const { return x * other.x + y * other.y; }
+	T cross(const Vector2<T>& other) const { return x * other.y - y * other.x; }
+
+	Vector2<T> lerp(const Vector2<T>& other, float t) const {
+		return Vector2<T>(x + t * (other.x - x), y + t * (other.y - y));
+	}
+	Vector2<T> slerp(const Vector2<T>& other, float t) const {
+		float dot           = normalized().dot(other.normalized());
+		dot                 = std::clamp(dot, -1.0f, 1.0f);
+		float      theta    = std::acos(dot) * t;
+		Vector2<T> relative = other - (*this) * dot;
+		relative            = relative.normalized();
+		return ((*this) * std::cos(theta)) + (relative * std::sin(theta));
+	}
+
+	Vector2<T> smooth_damp(const Vector2<T>& target,
+	                       const Vector2<T>& current_velocity,
+	                       float             smooth_time,
+	                       float             max_speed) const {
+		float t           = 2.0f / smooth_time;
+		t                 = std::clamp(t, 0.0f, 1.0f);
+		float      omega  = 2.0f / smooth_time;
+		float      x      = omega * t;
+		float      exp    = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
+		Vector2<T> change = target - (*this);
+		Vector2<T> temp   = (current_velocity + change * omega) * t;
+		Vector2<T> result = (*this) + (change * exp);
+		if (result.magnitude() > max_speed) {
+			result = result.normalized() * max_speed;
+		}
+		return result;
 	}
 
 	T magnitude() const { return std::sqrt(x * x + y * y); }
+
+	static Vector2<T> zero() { return Vector2<T>(0, 0); }
+	static Vector2<T> one() { return Vector2<T>(1, 1); }
+	static Vector2<T> up() { return Vector2<T>(0, 1); }
+	static Vector2<T> down() { return Vector2<T>(0, -1); }
+	static Vector2<T> left() { return Vector2<T>(-1, 0); }
+	static Vector2<T> right() { return Vector2<T>(1, 0); }
 };
 
 typedef Vector2<int>          Vector2i;
@@ -61,6 +104,7 @@ class InputHandler {
 	static void update_key_states();
 
 	static std::map<SDL_Keycode, InputState> get_key_states() { return get()._key_states; }
+	static Vector2f                          get_key_direction();
 	static void set_key_state(const SDL_Keycode& code, InputState new_state) { get()._key_states[code] = new_state; }
 
 	static bool is_key_pressed(const SDL_Keycode& code) { return get()._key_states[code] == InputState::PRESSED; }
@@ -69,6 +113,8 @@ class InputHandler {
 
 	static std::string input_state_to_string(InputState state);
 	static std::string key_code_to_string(int code);
+	static std::string direction_to_string(const Direction& direction);
+	static Vector2f    direction_to_vector(const Direction& direction);
 
 	static void update_mouse_states();
 
@@ -123,6 +169,10 @@ class InputHandler {
 			os << "    \"" << key_code_to_string(it->first) << "\": \"" << input_state_to_string(it->second) << "\",\n";
 		}
 		os << "  },\n";
+		os << "  \"key_direction\": {\n";
+		os << "    \"x\": " << inputHandler._key_direction.x << ",\n";
+		os << "    \"y\": " << inputHandler._key_direction.y << "\n";
+		os << "  },\n";
 		os << "  \"mouse_states\": {\n";
 		for (auto it = inputHandler._mouse_states.begin(); it != inputHandler._mouse_states.end(); ++it) {
 			os << "    \"" << mouse_button_to_string(it->first) << "\": \"" << input_state_to_string(it->second)
@@ -156,6 +206,7 @@ class InputHandler {
   private:
 	std::map<SDL_Keycode, InputState> _key_states;
 	std::map<MouseButton, InputState> _mouse_states;
+	Vector2f                          _key_direction = Vector2f(0, 0);
 
 	Vector2f _mouse_position;
 	Vector2f _last_mouse_position;
