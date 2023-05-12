@@ -2,8 +2,8 @@
 
 const AnimationFrame& AnimationController::get_current_frame() {
 	if (_animations.empty() || _current_animation_name.empty()) {
-		printf("AnimationController::get_current_frame() - No animations or current animation name is empty\n");
-		return AnimationFrame();
+		throw std::runtime_error(
+		    "AnimationController::get_current_frame() - No animations or current animation name is empty");
 	}
 
 	return _animations[_current_animation_name].get_frame(current_frame_index);

@@ -37,6 +37,9 @@ class Sprite {
 
 	AnimationController& get_animation_controller() { return _animation_controller; }
 
+	Direction get_direction() const { return _direction; }
+	void      set_direction(Direction direction) { _direction = direction; }
+
   protected:
 	SDL_Texture& _texture;
 	SDL_Rect     _frame_rect;

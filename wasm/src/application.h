@@ -82,13 +82,39 @@ class Application {
 	void render_text(const char *text, int x, int y, int size);
 
 	/**
+	 * Getters and setters for game states
+	 */
+	bool is_running() const { return _running; }
+	void set_running(bool running) { _running = running; }
+
+	int  get_width() const { return _width; }
+	void set_width(int width) { _width = width; }
+
+	int  get_height() const { return _height; }
+	void set_height(int height) { _height = height; }
+
+	int  get_last_frame_time() const { return _last_frame_time; }
+	void set_last_frame_time(int last_frame_time) { _last_frame_time = last_frame_time; }
+
+	double get_delta_time() const { return _delta_time; }
+	void   set_delta_time(double delta_time) { _delta_time = delta_time; }
+
+	Uint64 get_NOW() const { return NOW; }
+	void   set_NOW(Uint64 time) { NOW = time; }
+
+	Uint64 get_LAST() const { return LAST; }
+	void   set_LAST(Uint64 time) { LAST = time; }
+
+	/**
 	 * Game state
 	 */
 	bool                                 _running         = false;
 	int                                  _width           = 1920;
 	int                                  _height          = 1080;
 	int                                  _last_frame_time = 0;
-	int                                  _delta_time      = 0;
+	double                               _delta_time      = 0;
+	Uint64                               NOW              = SDL_GetPerformanceCounter();
+	Uint64                               LAST             = 0;
 	std::vector<std::unique_ptr<Sprite>> _sprites;
 	std::unique_ptr<Sprite>              _player = nullptr;
 };

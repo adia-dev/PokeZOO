@@ -35,7 +35,7 @@ struct Animation {
 
 	AnimationFrame& get_frame(int index) {
 		if (index >= frames.size()) {
-			printf("Animation::get_frame() - Index out of range: %d not in [0-%d]\n", index, frames.size() - 1);
+			printf("Animation::get_frame() - Index out of range: %d not in [0-%zu]\n", index, frames.size() - 1);
 			throw std::out_of_range("Animation::get_frame() - Index out of range");
 		}
 		return frames[index];

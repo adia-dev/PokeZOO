@@ -23,9 +23,10 @@ void Sprite::render(SDL_Renderer* renderer) {
 }
 
 void Sprite::update(float delta_time) {
-	_animation_controller.update(delta_time);
-
-	_frame_rect = _animation_controller.get_current_frame().rect;
+	if (_animation_controller.has_animations()) {
+		_animation_controller.update(delta_time);
+		_frame_rect = _animation_controller.get_current_frame().rect;
+	}
 }
 
 void Sprite::move(int x, int y) {

@@ -37,7 +37,7 @@ int Application::run() {
 		    Application *app = static_cast<Application *>(arg);
 		    app->on_loop_start();
 		    app->handle_events();
-		    app->handle_input();
+		    // app->handle_input();
 		    app->update_delta_time();
 		    app->update();
 		    app->render();
@@ -138,28 +138,28 @@ bool Application::init_entities() {
 	std::vector<AnimationFrame> walk_up_frames;
 	walk_up_frames.push_back(AnimationFrame({32, 0, 32, 32}, 100));
 	walk_up_frames.push_back(AnimationFrame({0, 0, 32, 32}, 100));
-	walk_up_frames.push_back(AnimationFrame({96, 0, 32, 32}, 100));
+	walk_up_frames.push_back(AnimationFrame({64, 0, 32, 32}, 100));
 	walk_up_frames.push_back(AnimationFrame({0, 0, 32, 32}, 100));
 	Animation walk_up_animation = Animation("walk_up", walk_up_frames, AnimationDirection::LOOP);
 
 	std::vector<AnimationFrame> walk_down_frames;
 	walk_down_frames.push_back(AnimationFrame({32, 32, 32, 32}, 100));
 	walk_down_frames.push_back(AnimationFrame({0, 32, 32, 32}, 100));
-	walk_down_frames.push_back(AnimationFrame({96, 32, 32, 32}, 100));
+	walk_down_frames.push_back(AnimationFrame({64, 32, 32, 32}, 100));
 	walk_down_frames.push_back(AnimationFrame({0, 32, 32, 32}, 100));
 	Animation walk_down_animation = Animation("walk_down", walk_down_frames, AnimationDirection::LOOP);
 
 	std::vector<AnimationFrame> walk_left_frames;
 	walk_left_frames.push_back(AnimationFrame({32, 64, 32, 32}, 100));
 	walk_left_frames.push_back(AnimationFrame({0, 64, 32, 32}, 100));
-	walk_left_frames.push_back(AnimationFrame({96, 64, 32, 32}, 100));
+	walk_left_frames.push_back(AnimationFrame({64, 64, 32, 32}, 100));
 	walk_left_frames.push_back(AnimationFrame({0, 64, 32, 32}, 100));
 	Animation walk_left_animation = Animation("walk_left", walk_left_frames, AnimationDirection::LOOP);
 
 	std::vector<AnimationFrame> walk_right_frames;
 	walk_right_frames.push_back(AnimationFrame({32, 96, 32, 32}, 100));
 	walk_right_frames.push_back(AnimationFrame({0, 96, 32, 32}, 100));
-	walk_right_frames.push_back(AnimationFrame({96, 96, 32, 32}, 100));
+	walk_right_frames.push_back(AnimationFrame({64, 96, 32, 32}, 100));
 	walk_right_frames.push_back(AnimationFrame({0, 96, 32, 32}, 100));
 	Animation walk_right_animation = Animation("walk_right", walk_right_frames, AnimationDirection::LOOP);
 
@@ -173,7 +173,7 @@ bool Application::init_entities() {
 	_player->get_animation_controller().add_animation("walk_left", walk_left_animation);
 	_player->get_animation_controller().add_animation("walk_right", walk_right_animation);
 
-	_player->get_animation_controller().play("idle_right");
+	_player->get_animation_controller().play("walk_right");
 
 	_player->set_position(1920 / 2 - 16, 1080 / 2 - 16);
 
@@ -192,19 +192,38 @@ void Application::on_loop_start() {
 
 void Application::handle_input() {
 	if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_LEFT)) {
-		_player->move(-1, 0);
+		_player->move(-0.5f * Application::get_delta_time(), 0);
+		_player->set_direction(Direction::LEFT);
 		_player->get_animation_controller().play("walk_left");
 	} else if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_RIGHT)) {
-		_player->move(1, 0);
+		_player->move(0.5f * Application::get_delta_time(), 0);
+		_player->set_direction(Direction::RIGHT);
 		_player->get_animation_controller().play("walk_right");
 	} else if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_UP)) {
-		_player->move(0, -1);
+		_player->move(0, -0.5f * Application::get_delta_time());
+		_player->set_direction(Direction::UP);
 		_player->get_animation_controller().play("walk_up");
 	} else if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_DOWN)) {
-		_player->move(0, 1);
+		_player->move(0, 0.5f * Application::get_delta_time());
+		_player->set_direction(Direction::DOWN);
 		_player->get_animation_controller().play("walk_down");
 	} else {
-		_player->get_animation_controller().play("idle_right");
+		switch (_player->get_direction()) {
+			case Direction::UP:
+				_player->get_animation_controller().play("idle_up");
+				break;
+			case Direction::DOWN:
+				_player->get_animation_controller().play("idle_down");
+				break;
+			case Direction::LEFT:
+				_player->get_animation_controller().play("idle_left");
+				break;
+			case Direction::RIGHT:
+				_player->get_animation_controller().play("idle_right");
+				break;
+			default:
+				break;
+		}
 	}
 }
 
@@ -213,31 +232,23 @@ void Application::handle_key_down(SDL_Keycode key) {
 		quit();
 	}
 
-	InputHandler::set_key_state(key, InputHandler::is_key_pressed(key) ? KeyState::DOWN : KeyState::PRESSED);
+	InputHandler::set_key_state(key, KeyState::PRESSED);
 }
 
 void Application::handle_key_up(SDL_Keycode key) {
-	InputHandler::set_key_state(key, KeyState::RELEASED);
+	// InputHandler::set_key_state(key, KeyState::RELEASED);
 }
 
 void Application::update_delta_time() {
-	int current_time = SDL_GetTicks();
-	_delta_time      = (current_time - _last_frame_time) / 1000.0f;
-	_last_frame_time = current_time;
+	LAST        = NOW;
+	NOW         = SDL_GetPerformanceCounter();
+	_delta_time = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency());
 }
 
 void Application::update() {
-	for (auto [code, state] : InputHandler::get_key_states()) {
-		if (state == KeyState::PRESSED) {
-			printf("%s: %s\n",
-			       InputHandler::key_code_to_string(code).c_str(),
-			       InputHandler::key_state_to_string(state).c_str());
-		}
+	for (auto &sprite : _sprites) {
+		sprite->update(_delta_time);
 	}
-
-	// for (auto &sprite : _sprites) {
-	// 	sprite->update(_delta_time);
-	// }
 
 	_player->update(_delta_time);
 }
