@@ -111,7 +111,7 @@ class Application {
 	bool                                 _running         = false;
 	int                                  _width           = 1920;
 	int                                  _height          = 1080;
-	int                                  _last_frame_time = 0;
+	double                               _last_frame_time = 0;
 	double                               _delta_time      = 0;
 	Uint64                               NOW              = SDL_GetPerformanceCounter();
 	Uint64                               LAST             = 0;

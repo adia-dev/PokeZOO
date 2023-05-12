@@ -37,7 +37,7 @@ int Application::run() {
 		    Application *app = static_cast<Application *>(arg);
 		    app->on_loop_start();
 		    app->handle_events();
-		    // app->handle_input();
+		    app->handle_input();
 		    app->update_delta_time();
 		    app->update();
 		    app->render();
@@ -47,7 +47,7 @@ int Application::run() {
 	    1);
 #else
 	while (app->_running) {
-		// app->on_loop_start();
+		app->on_loop_start();
 		app->handle_events();
 		app->handle_input();
 		app->update_delta_time();
@@ -192,19 +192,19 @@ void Application::on_loop_start() {
 
 void Application::handle_input() {
 	if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_LEFT)) {
-		_player->move(-0.5f * Application::get_delta_time(), 0);
+		_player->move(-250.f * Application::get_delta_time(), 0);
 		_player->set_direction(Direction::LEFT);
 		_player->get_animation_controller().play("walk_left");
 	} else if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_RIGHT)) {
-		_player->move(0.5f * Application::get_delta_time(), 0);
+		_player->move(250.f * Application::get_delta_time(), 0);
 		_player->set_direction(Direction::RIGHT);
 		_player->get_animation_controller().play("walk_right");
 	} else if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_UP)) {
-		_player->move(0, -0.5f * Application::get_delta_time());
+		_player->move(0, -250.f * Application::get_delta_time());
 		_player->set_direction(Direction::UP);
 		_player->get_animation_controller().play("walk_up");
 	} else if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_DOWN)) {
-		_player->move(0, 0.5f * Application::get_delta_time());
+		_player->move(0, 250.f * Application::get_delta_time());
 		_player->set_direction(Direction::DOWN);
 		_player->get_animation_controller().play("walk_down");
 	} else {
@@ -236,13 +236,13 @@ void Application::handle_key_down(SDL_Keycode key) {
 }
 
 void Application::handle_key_up(SDL_Keycode key) {
-	// InputHandler::set_key_state(key, KeyState::RELEASED);
+	InputHandler::set_key_state(key, KeyState::RELEASED);
 }
 
 void Application::update_delta_time() {
-	LAST        = NOW;
-	NOW         = SDL_GetPerformanceCounter();
-	_delta_time = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency());
+	double current_time = SDL_GetTicks();
+	_delta_time         = (current_time - _last_frame_time) / 1000.0f;
+	_last_frame_time    = current_time;
 }
 
 void Application::update() {
@@ -266,6 +266,38 @@ void Application::render() {
 	}
 
 	_player->render(_renderer.get());
+
+	// write the delta time to the screen
+	std::stringstream ss;
+	ss << "Delta time: " << _delta_time;
+	// print the pressed arrow keys
+	ss << " | ";
+	if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_LEFT)) {
+		ss << "Left"
+		   << " | ";
+	}
+	if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_RIGHT)) {
+		ss << "Right"
+		   << " | ";
+	}
+	if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_UP)) {
+		ss << "Up"
+		   << " | ";
+	}
+	if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_DOWN)) {
+		ss << "Down"
+		   << " | ";
+	}
+
+	SDL_Color    color = {255, 255, 255, 255};
+	SDL_Surface *surface =
+	    TTF_RenderText_Solid(&AssetManager::get_font("../src/assets/fonts/Roboto/Roboto-Regular.ttf", 16),
+	                         ss.str().c_str(),
+	                         color);
+	SDL_Texture *texture = SDL_CreateTextureFromSurface(_renderer.get(), surface);
+	SDL_Rect     rect    = {0, 0, surface->w, surface->h};
+	SDL_RenderCopy(_renderer.get(), texture, NULL, &rect);
+	SDL_FreeSurface(surface);
 
 	SDL_RenderPresent(_renderer.get());
 }

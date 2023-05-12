@@ -32,3 +32,22 @@ bool AssetManager::load_texture(const std::string &path) {
 
 	return true;
 }
+
+TTF_Font &AssetManager::get_font(const std::string &path, int size) {
+	load_font(path, size);
+	return *(AssetManager::get())._fontMap[path];
+}
+
+bool AssetManager::load_font(const std::string &path, int size) {
+	auto &fontMap = AssetManager::get()._fontMap;
+	if (fontMap.find(path) == fontMap.end()) {
+		TTF_Font *font = TTF_OpenFont(path.c_str(), size);
+		if (font == nullptr) {
+			throw std::runtime_error("Failed to load font: " + path);
+		}
+
+		fontMap[path] = font;
+	}
+
+	return true;
+}
