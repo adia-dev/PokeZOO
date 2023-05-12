@@ -16,18 +16,22 @@ void InputHandler::update_key_states() {
 		}
 	}
 
-	// update key direction
+	// update key direction, cannot go diagonally
 	Vector2f desired_direction = Vector2f::zero();
 	if (is_key_down(SDLK_w) || is_key_down(SDLK_UP)) {
+		desired_direction.x = 0;
 		desired_direction.y -= 1;
 	}
 	if (is_key_down(SDLK_s) || is_key_down(SDLK_DOWN)) {
+		desired_direction.x = 0;
 		desired_direction.y += 1;
 	}
 	if (is_key_down(SDLK_a) || is_key_down(SDLK_LEFT)) {
+		desired_direction.y = 0;
 		desired_direction.x -= 1;
 	}
 	if (is_key_down(SDLK_d) || is_key_down(SDLK_RIGHT)) {
+		desired_direction.y = 0;
 		desired_direction.x += 1;
 	}
 	desired_direction    = desired_direction.normalized();
@@ -37,8 +41,28 @@ void InputHandler::update_key_states() {
 	}
 }
 
+std::map<SDL_Keycode, InputState> InputHandler::get_key_states() {
+	return get()._key_states;
+}
+
 Vector2f InputHandler::get_key_direction() {
 	return get()._key_direction;
+}
+
+void InputHandler::set_key_state(const SDL_Keycode& code, InputState new_state) {
+	get()._key_states[code] = new_state;
+}
+
+bool InputHandler::is_key_pressed(const SDL_Keycode& code) {
+	return get()._key_states[code] == InputState::PRESSED;
+}
+
+bool InputHandler::is_key_down(const SDL_Keycode& code) {
+	return get()._key_states[code] == InputState::DOWN;
+}
+
+bool InputHandler::is_key_released(const SDL_Keycode& code) {
+	return get()._key_states[code] == InputState::RELEASED;
 }
 
 std::string InputHandler::input_state_to_string(InputState state) {
@@ -355,6 +379,67 @@ void InputHandler::update_mouse_states() {
 	}
 }
 
+std::map<MouseButton, InputState> InputHandler::get_mouse_states() {
+	return get()._mouse_states;
+}
+
+void InputHandler::set_mouse_button_state(const MouseButton& button, InputState new_state) {
+	get()._mouse_states[button] = new_state;
+}
+
+bool InputHandler::is_mouse_pressed(const MouseButton& button) {
+	return get()._mouse_states[button] == InputState::PRESSED;
+}
+
+bool InputHandler::is_mouse_down(const MouseButton& button) {
+	return get()._mouse_states[button] == InputState::DOWN;
+}
+
+bool InputHandler::is_mouse_released(const MouseButton& button) {
+	return get()._mouse_states[button] == InputState::RELEASED;
+}
+
+Vector2f InputHandler::get_mouse_position() {
+	return get()._mouse_position;
+}
+
+Vector2i InputHandler::get_mouse_coords(int cell_width, int cell_height) {
+	return Vector2i(static_cast<int>(get()._mouse_position.x / cell_width),
+	                static_cast<int>(get()._mouse_position.y / cell_height));
+}
+
+void InputHandler::set_mouse_position(const Vector2f& position) {
+	get()._last_mouse_position = get()._mouse_position;
+	get()._mouse_position      = position;
+}
+
+void InputHandler::set_mouse_position(float x, float y) {
+	get()._last_mouse_position = get()._mouse_position;
+	get()._mouse_position      = Vector2f(x, y);
+}
+
+Vector2f InputHandler::get_mouse_delta() {
+	return get()._mouse_position - get()._last_mouse_position;
+}
+
+Vector2f InputHandler::get_mouse_wheel() {
+	return get()._mouse_wheel;
+}
+
+void InputHandler::set_mouse_wheel(const Vector2f& wheel) {
+	get()._last_mouse_wheel = get()._mouse_wheel;
+	get()._mouse_wheel      = wheel;
+}
+
+void InputHandler::set_mouse_wheel(float x, float y) {
+	get()._last_mouse_wheel = get()._mouse_wheel;
+	get()._mouse_wheel      = Vector2f(x, y);
+}
+
+Vector2f InputHandler::get_mouse_wheel_delta() {
+	return get()._mouse_wheel - get()._last_mouse_wheel;
+}
+
 std::string InputHandler::mouse_button_to_string(MouseButton button) {
 	switch (button) {
 		case MouseButton::LEFT:
@@ -378,5 +463,28 @@ MouseButton InputHandler::uint8_to_mouse_button(uint8_t button) {
 			return MouseButton::RIGHT;
 		default:
 			return MouseButton::UNKNOWN;
+	}
+}
+
+Direction InputHandler::vector_to_direction(const Vector2f& vector) {
+	float x = vector.x;
+	float y = vector.y;
+
+	if (x == 0 && y == 0) {
+		return Direction::NONE;
+	}
+
+	if (std::abs(x) > std::abs(y)) {
+		if (x > 0) {
+			return Direction::RIGHT;
+		} else {
+			return Direction::LEFT;
+		}
+	} else {
+		if (y > 0) {
+			return Direction::DOWN;
+		} else {
+			return Direction::UP;
+		}
 	}
 }

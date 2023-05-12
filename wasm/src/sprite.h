@@ -65,6 +65,9 @@ class Sprite {
 				break;
 			case Direction::RIGHT:
 				os << "\"RIGHT\"";
+			case Direction::NONE:
+			default:
+				os << "\"NONE\"";
 				break;
 		}
 		os << ",\n";

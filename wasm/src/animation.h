@@ -7,8 +7,6 @@
 
 #include <iomanip>
 
-enum class AnimationDirection { FORWARD, REVERSE, LOOP, PING_PONG };
-
 struct Animation {
 	std::string                 name;
 	std::vector<AnimationFrame> frames;

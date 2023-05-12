@@ -206,23 +206,19 @@ void Application::handle_input() {
 	auto input_direction = InputHandler::get_key_direction();
 
 	// set the player's direction
-	if (input_direction.x > 0) {
-		_player->set_direction(Direction::RIGHT);
-	} else if (input_direction.x < 0) {
-		_player->set_direction(Direction::LEFT);
-	} else if (input_direction.y > 0) {
-		_player->set_direction(Direction::DOWN);
-	} else if (input_direction.y < 0) {
-		_player->set_direction(Direction::UP);
-	}
+	Direction player_direction = InputHandler::vector_to_direction(input_direction);
+	if (player_direction != Direction::NONE) _player->set_direction(player_direction);
+
+	std::string animation_prefix =
+	    input_direction.magnitude() > 0.1f ? InputHandler::is_key_down(SDLK_LSHIFT) ? "run_" : "walk_" : "idle_";
 
 	if (input_direction.magnitude() > 0.1f) {
 		_player->get_animation_controller().play(
-		    "walk_" + StringUtils::to_lower(InputHandler::direction_to_string(_player->get_direction())));
+		    animation_prefix + StringUtils::to_lower(InputHandler::direction_to_string(player_direction)));
 		_player->move(input_direction.x * _delta_time * 300.f, input_direction.y * _delta_time * 300.f);
 	} else {
 		_player->get_animation_controller().play(
-		    "idle_" + StringUtils::to_lower(InputHandler::direction_to_string(_player->get_direction())));
+		    animation_prefix + StringUtils::to_lower(InputHandler::direction_to_string(_player->get_direction())));
 	}
 }
 
