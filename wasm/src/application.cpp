@@ -131,10 +131,21 @@ void Application::handle_events() {
 bool Application::init_entities() {
 	//? NOTE: this is where you would initialise your entities
 	//? e.g.:
-	for (int i = 0; i < 100; ++i) {
-		Application::add_entity(Sprite(AssetManager::get_texture("../src/assets/images/characters_no_bg.png"),
-		                               {0, 141, 32, 32},
-		                               {rand() % 1920, rand() % 1080, 32, 32}));
+	for (int i = 0; i < 10; ++i) {
+		bool is_zekrom = rand() % 2;
+		int  start_x   = is_zekrom ? 512 : 0;
+
+		Sprite new_entity =
+		    Sprite(AssetManager::get_texture("../src/assets/images/spritesheets/pokemons/pokemons_4th_gen.png"),
+		           {start_x, 2272, 64, 64},
+		           {rand() % 1920, rand() % 1080, 64, 64});
+
+		Animation idle = Animation("idle", {start_x, 2272, 64, 64}, 1, 8, AnimationDirection::LOOP, 100);
+		new_entity.get_animation_controller().add_animation("idle", idle);
+
+		new_entity.get_animation_controller().play("idle");
+
+		Application::add_entity(new_entity);
 	}
 	printf("%zu Entities created !\n", Application::get_entities().size());
 
@@ -310,12 +321,11 @@ void Application::render() {
 	SDL_RenderClear(_renderer.get());
 
 	render_background();
+	_player->render(_renderer.get());
 
 	for (auto &sprite : _sprites) {
 		sprite->render(_renderer.get());
 	}
-
-	_player->render(_renderer.get());
 
 	// write the delta time to the screen
 	std::stringstream ss;

@@ -53,6 +53,7 @@ class AnimationController {
 		// }
 		// os << "  ],\n";
 		os << "  \"current_animation_name\": \"" << controller._current_animation_name << "\",\n";
+		os << "  \"animation_count\": " << controller._animations.size() << ",\n";
 		os << "  \"speed\": " << std::setprecision(2) << std::fixed << controller.speed << ",\n";
 		os << "  \"current_frame_index\": " << controller.current_frame_index << ",\n";
 		os << "  \"timer\": " << std::setprecision(2) << std::fixed << controller._timer << ",\n";

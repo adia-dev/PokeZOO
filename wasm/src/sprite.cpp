@@ -14,7 +14,8 @@ Sprite::Sprite(SDL_Texture& texture, const SDL_Rect& frame_rect, int x, int y, i
 }
 
 Sprite::Sprite(const Sprite& other)
-    : _texture(other._texture), _frame_rect(other._frame_rect), _world_rect(other._world_rect) {}
+    : _texture(other._texture), _frame_rect(other._frame_rect), _world_rect(other._world_rect),
+      _animation_controller(other._animation_controller), _direction(other._direction) {}
 
 void Sprite::render(SDL_Renderer* renderer) {
 	if (renderer == NULL) return;
