@@ -354,6 +354,8 @@ void Application::render_background() {
 			SDL_RenderDrawLine(_renderer.get(), 0, y, 1920, y);
 		}
 	}
+
+	SDL_RenderCopy(_renderer.get(), &AssetManager::get_texture("../src/assets/tiled/zoo_1.png"), NULL, NULL);
 }
 
 void Application::render_text(const char *text, int x, int y, int size) {}

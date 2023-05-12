@@ -1,0 +1,49 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1.7761
+        },
+        "# route_1": {
+            "scaleInEditor": 1
+        },
+        "zoo.tmx": {
+            "scale": 1,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 480.5,
+                "y": 238
+            }
+        },
+        "zoo.tmx# route_1": {
+            "scaleInDock": 1.015
+        },
+        "zoo.tmx#buildings_1": {
+            "scaleInDock": 0.8341
+        }
+    },
+    "last.imagePath": "/Users/abdoulayedia/Projects/School/AL_2/NodeJS/PokeZOO/wasm/src/assets/images/spritesheets/map",
+    "map.height": 32,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 60,
+    "openFiles": [
+    ],
+    "project": "zoo.tiled-project",
+    "recentFiles": [
+        "zoo.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    },
+    "tileset.useTransparentColor": true
+}
