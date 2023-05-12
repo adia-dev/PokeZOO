@@ -41,8 +41,25 @@ class AnimationController {
 	void pause() { _is_playing = false; }
 
 	const AnimationFrame& get_current_frame();
+	const Animation&      get_current_animation() { return _animations[_current_animation_name]; }
 
 	void update(float delta_time);
+
+	friend std::ostream& operator<<(std::ostream& os, const AnimationController& controller) {
+		os << "{\n";
+		os << "  \"animations\": {\n";
+		for (auto it = controller._animations.begin(); it != controller._animations.end(); ++it) {
+			os << "    \"" << it->first << "\": " << it->second << ",\n";
+		}
+		os << "  },\n";
+		os << "  \"current_animation_name\": \"" << controller._current_animation_name << "\",\n";
+		os << "  \"speed\": " << std::setprecision(2) << std::fixed << controller.speed << ",\n";
+		os << "  \"current_frame_index\": " << controller.current_frame_index << ",\n";
+		os << "  \"timer\": " << std::setprecision(2) << std::fixed << controller._timer << ",\n";
+		os << "  \"is_playing\": " << std::boolalpha << controller._is_playing << "\n";
+		os << "}";
+		return os;
+	}
 
   private:
 	std::map<std::string, Animation> _animations;

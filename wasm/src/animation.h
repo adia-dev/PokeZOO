@@ -5,6 +5,8 @@
 
 #include "animation_frame.h"
 
+#include <iomanip>
+
 enum class AnimationDirection { FORWARD, REVERSE, LOOP, PING_PONG };
 
 struct Animation {
@@ -46,15 +48,25 @@ struct Animation {
 
 	// overload the ostream operator<< to print the frames
 	friend std::ostream& operator<<(std::ostream& os, const Animation& animation) {
-		os << "{\n\tname: " << animation.name << ",\n\tframes: [";
+		os << "{" << std::endl;
+		os << "  \"name\": \"" << animation.name << "\"," << std::endl;
+		os << "  \"direction\": \"" << static_cast<int>(animation.direction) << "\"," << std::endl;
+		os << "  \"frames\": [" << std::endl;
 
-		for (int i = 0; i < animation.frames.size(); i++) {
-			os << "\n\t\t" << animation.frames[i];
-
-			if (i < animation.frames.size() - 1) os << ",";
+		for (size_t i = 0; i < animation.frames.size(); i++) {
+			const AnimationFrame& frame = animation.frames[i];
+			os << "    {" << std::endl;
+			os << "      \"x\": " << frame.rect.x << "," << std::endl;
+			os << "      \"y\": " << frame.rect.y << "," << std::endl;
+			os << "      \"width\": " << frame.rect.w << "," << std::endl;
+			os << "      \"height\": " << frame.rect.h << "," << std::endl;
+			os << "      \"duration\": " << std::fixed << std::setprecision(1) << frame.duration;
+			os << (i < animation.frames.size() - 1 ? "," : "") << std::endl;
+			os << "    }" << std::endl;
 		}
 
-		os << "\n\t]\n}";
+		os << "  ]" << std::endl;
+		os << "}";
 
 		return os;
 	}

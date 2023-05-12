@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 3.1)
 # Define customizable variables
 set(MY_OPTIMIZATION_LEVEL "O1" CACHE STRING "The optimization level")
 set(MY_EXPORTED_FUNCTIONS "_mainf" CACHE STRING "The exported functions")
-set(MY_TOTAL_MEMORY "67108864" CACHE STRING "The total memory")
+set(MY_TOTAL_MEMORY "256MB" CACHE STRING "The total memory")
+set(MY_INITIAL_MEMORY "256MB" CACHE STRING "The initial memory")
+set(MY_ALLOW_MEMORY_GROWTH "1" CACHE STRING "Allow memory growth")
 
 # Set the default output directory for the built files
 set(DEFAULT_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/../dist")
@@ -45,7 +47,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
     -s USE_SDL_TTF=2 \
     -s EXPORTED_FUNCTIONS='[\"${MY_EXPORTED_FUNCTIONS}\"]' \
     -s NO_EXIT_RUNTIME=1 \
+    -s INITIAL_MEMORY=${MY_INITIAL_MEMORY} \
     -s TOTAL_MEMORY=${MY_TOTAL_MEMORY} \
+    -s ALLOW_MEMORY_GROWTH=${MY_ALLOW_MEMORY_GROWTH} \
     -s --preload-file ../src/assets \
     -s \"EXPORTED_RUNTIME_METHODS=['ccall']\""
 )

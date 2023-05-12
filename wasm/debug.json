@@ -1,0 +1,27 @@
+{
+  "key_states": {
+    "TAB": "PRESSED",
+    "RIGHT": "NOT PRESSED",
+    "LEFT": "NOT PRESSED",
+    "DOWN": "NOT PRESSED",
+    "UP": "NOT PRESSED"
+  },
+  "mouse_states": {
+  },
+  "mouse_position": {
+    "x": 533,
+    "y": 484
+  },
+  "last_mouse_position": {
+    "x": 533,
+    "y": 485
+  },
+  "mouse_wheel": {
+    "x": 0,
+    "y": 0
+  },
+  "last_mouse_wheel": {
+    "x": 0,
+    "y": 0
+  }
+}

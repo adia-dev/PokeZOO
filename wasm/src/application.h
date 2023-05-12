@@ -68,6 +68,10 @@ class Application {
 	void handle_input();
 	void handle_key_down(SDL_Keycode key);
 	void handle_key_up(SDL_Keycode key);
+	void handle_mouse_motion(int x, int y);
+	void handle_mouse_button_down(Uint8 button, int x, int y);
+	void handle_mouse_button_up(Uint8 button, int x, int y);
+	void handle_mouse_wheel(int x, int y);
 
 	/**
 	 * Methods for updating the game state
@@ -79,6 +83,7 @@ class Application {
 	 * Methods for rendering the game state
 	 */
 	void render();
+	void render_background();
 	void render_text(const char *text, int x, int y, int size);
 
 	/**

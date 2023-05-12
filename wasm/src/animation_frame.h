@@ -28,13 +28,18 @@ struct AnimationFrame {
 
 	// overload the ostream operator<< to print the callback
 	friend std::ostream& operator<<(std::ostream& os, const AnimationFrame& animation_frame) {
-		os << "{\n\trect: { x: " << animation_frame.rect.x << ", y: " << animation_frame.rect.y
-		   << ", w: " << animation_frame.rect.w << ", h: " << animation_frame.rect.h
-		   << " },\n\tduration: " << animation_frame.duration << ",\n\tis_flipped: " << std::boolalpha
-		   << animation_frame.is_flipped << ",\n\tloop_count: " << animation_frame.loop_count
-		   << ",\n\tcurrent_loop_count: " << animation_frame.current_loop_count
-		   << ",\n\tcallback: " << &animation_frame.callback << "\n}";
-
+		os << "{\n";
+		os << "    \"rect\": {\n";
+		os << "        \"x\": " << animation_frame.rect.x << ",\n";
+		os << "        \"y\": " << animation_frame.rect.y << ",\n";
+		os << "        \"w\": " << animation_frame.rect.w << ",\n";
+		os << "        \"h\": " << animation_frame.rect.h << "\n";
+		os << "    },\n";
+		os << "    \"duration\": " << animation_frame.duration << ",\n";
+		os << "    \"is_flipped\": " << std::boolalpha << animation_frame.is_flipped << ",\n";
+		os << "    \"loop_count\": " << animation_frame.loop_count << ",\n";
+		os << "    \"current_loop_count\": " << animation_frame.current_loop_count << "\n";
+		os << "}";
 		return os;
 	}
 };

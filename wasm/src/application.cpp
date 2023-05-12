@@ -113,6 +113,19 @@ void Application::handle_events() {
 			case SDL_KEYUP:
 				handle_key_up(event.key.keysym.sym);
 				break;
+			// mouse events
+			case SDL_MOUSEMOTION:
+				handle_mouse_motion(event.motion.x, event.motion.y);
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+				handle_mouse_button_down(event.button.button, event.button.x, event.button.y);
+				break;
+			case SDL_MOUSEBUTTONUP:
+				handle_mouse_button_up(event.button.button, event.button.x, event.button.y);
+				break;
+			case SDL_MOUSEWHEEL:
+				handle_mouse_wheel(event.wheel.x, event.wheel.y);
+				break;
 		}
 	}
 }
@@ -188,6 +201,7 @@ void Application::add_entity(const Sprite &sprite) {
 
 void Application::on_loop_start() {
 	InputHandler::update_key_states();
+	InputHandler::update_mouse_states();
 }
 
 void Application::handle_input() {
@@ -232,11 +246,27 @@ void Application::handle_key_down(SDL_Keycode key) {
 		quit();
 	}
 
-	InputHandler::set_key_state(key, KeyState::PRESSED);
+	InputHandler::set_key_state(key, InputState::PRESSED);
 }
 
 void Application::handle_key_up(SDL_Keycode key) {
-	InputHandler::set_key_state(key, KeyState::RELEASED);
+	InputHandler::set_key_state(key, InputState::RELEASED);
+}
+
+void Application::handle_mouse_motion(int x, int y) {
+	InputHandler::set_mouse_position(x, y);
+}
+
+void Application::handle_mouse_button_down(Uint8 button, int x, int y) {
+	InputHandler::set_mouse_button_state(InputHandler::uint8_to_mouse_button(button), InputState::PRESSED);
+}
+
+void Application::handle_mouse_button_up(Uint8 button, int x, int y) {
+	InputHandler::set_mouse_button_state(InputHandler::uint8_to_mouse_button(button), InputState::RELEASED);
+}
+
+void Application::handle_mouse_wheel(int x, int y) {
+	InputHandler::set_mouse_wheel(x, y);
 }
 
 void Application::update_delta_time() {
@@ -261,6 +291,8 @@ void Application::render() {
 	SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
 	SDL_RenderClear(_renderer.get());
 
+	render_background();
+
 	for (auto &sprite : _sprites) {
 		sprite->render(_renderer.get());
 	}
@@ -269,37 +301,40 @@ void Application::render() {
 
 	// write the delta time to the screen
 	std::stringstream ss;
-	ss << "Delta time: " << _delta_time;
-	// print the pressed arrow keys
-	ss << " | ";
-	if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_LEFT)) {
-		ss << "Left"
-		   << " | ";
-	}
-	if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_RIGHT)) {
-		ss << "Right"
-		   << " | ";
-	}
-	if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_UP)) {
-		ss << "Up"
-		   << " | ";
-	}
-	if (InputHandler::is_key_pressed(SDL_KeyCode::SDLK_DOWN)) {
-		ss << "Down"
-		   << " | ";
-	}
+	ss << "Delta Time: " << _delta_time << " FPS: " << 1.0f / _delta_time << std::endl
+	   << "Inputs: " << InputHandler::get();
 
 	SDL_Color    color = {255, 255, 255, 255};
 	SDL_Surface *surface =
-	    TTF_RenderText_Solid(&AssetManager::get_font("../src/assets/fonts/Roboto/Roboto-Regular.ttf", 16),
-	                         ss.str().c_str(),
-	                         color);
+	    TTF_RenderText_Blended_Wrapped(&AssetManager::get_font("../src/assets/fonts/Roboto/Roboto-Regular.ttf", 16),
+	                                   ss.str().c_str(),
+	                                   color,
+	                                   1920);
 	SDL_Texture *texture = SDL_CreateTextureFromSurface(_renderer.get(), surface);
 	SDL_Rect     rect    = {0, 0, surface->w, surface->h};
 	SDL_RenderCopy(_renderer.get(), texture, NULL, &rect);
 	SDL_FreeSurface(surface);
 
+	// render a red rectangle at the mouse position, 32x32 closest grid square
+	SDL_SetRenderDrawColor(_renderer.get(), 255, 0, 0, 255);
+	SDL_Rect rect2 = {(int)InputHandler::get_mouse_position().x / 32 * 32,
+	                  (int)InputHandler::get_mouse_position().y / 32 * 32,
+	                  32,
+	                  32};
+	SDL_RenderDrawRect(_renderer.get(), &rect2);
+
 	SDL_RenderPresent(_renderer.get());
+}
+
+void Application::render_background() {
+	// Draw a 32x32 grid, only outlines and low alpha
+	for (int x = 0; x < 1920; x += 32) {
+		for (int y = 0; y < 1080; y += 32) {
+			SDL_SetRenderDrawColor(_renderer.get(), 88, 88, 88, 32);
+			SDL_RenderDrawLine(_renderer.get(), x, 0, x, 1080);
+			SDL_RenderDrawLine(_renderer.get(), 0, y, 1920, y);
+		}
+	}
 }
 
 void Application::render_text(const char *text, int x, int y, int size) {}

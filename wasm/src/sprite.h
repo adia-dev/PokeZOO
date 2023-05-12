@@ -40,6 +40,43 @@ class Sprite {
 	Direction get_direction() const { return _direction; }
 	void      set_direction(Direction direction) { _direction = direction; }
 
+	friend std::ostream& operator<<(std::ostream& os, const Sprite& sprite) {
+		os << "{\n";
+		os << "  \"frame_rect\": {\n";
+		os << "    \"x\": " << sprite._frame_rect.x << ",\n";
+		os << "    \"y\": " << sprite._frame_rect.y << ",\n";
+		os << "    \"w\": " << sprite._frame_rect.w << ",\n";
+		os << "    \"h\": " << sprite._frame_rect.h << "\n";
+		os << "  },\n";
+		os << "  \"world_rect\": {\n";
+		os << "    \"x\": " << sprite._world_rect.x << ",\n";
+		os << "    \"y\": " << sprite._world_rect.y << ",\n";
+		os << "    \"w\": " << sprite._world_rect.w << ",\n";
+		os << "    \"h\": " << sprite._world_rect.h << "\n";
+		os << "  },\n";
+		os << "  \"direction\": ";
+		switch (sprite._direction) {
+			case Direction::UP:
+				os << "\"UP\"";
+				break;
+			case Direction::DOWN:
+				os << "\"DOWN\"";
+				break;
+			case Direction::LEFT:
+				os << "\"LEFT\"";
+				break;
+			case Direction::RIGHT:
+				os << "\"RIGHT\"";
+				break;
+		}
+		os << ",\n";
+		os << "  \"is_moving\": " << std::boolalpha << sprite._is_moving << ",\n";
+		os << "  \"speed\": " << std::setprecision(2) << std::fixed << sprite._speed << ",\n";
+		os << "  \"animation_controller\": " << sprite._animation_controller << "\n";
+		os << "}";
+		return os;
+	}
+
   protected:
 	SDL_Texture& _texture;
 	SDL_Rect     _frame_rect;
