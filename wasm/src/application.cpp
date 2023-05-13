@@ -149,8 +149,10 @@ bool Application::init_entities() {
 	}
 	printf("%zu Entities created !\n", Application::get_entities().size());
 
-	_player = std::make_unique<Sprite>(
-	    Sprite(AssetManager::get_texture("../src/assets/images/characters_no_bg.png"), {0, 0, 32, 32}, {0, 0, 32, 32}));
+	_player =
+	    std::make_unique<Character>(Character(AssetManager::get_texture("../src/assets/images/characters_no_bg.png"),
+	                                          (SDL_Rect) {0, 0, 32, 32},
+	                                          (SDL_Rect) {0, 0, 32, 32}));
 
 	Animation idle_up_animation    = Animation("idle_up", {0, 0, 32, 32}, 1, 1);
 	Animation idle_down_animation  = Animation("idle_down", {0, 32, 32, 32}, 1, 1);
@@ -215,6 +217,41 @@ bool Application::init_entities() {
 	run_right_frames.push_back(AnimationFrame({108, 96, 32, 32}, 100));
 	Animation run_right_animation = Animation("run_right", run_right_frames, AnimationDirection::LOOP);
 
+	// BIKE
+
+	Animation bike_idle_up_animation    = Animation("bike_idle_up", {448, 0, 32, 32}, 1, 1);
+	Animation bike_idle_down_animation  = Animation("bike_idle_down", {480, 0, 32, 32}, 1, 1);
+	Animation bike_idle_left_animation  = Animation("bike_idle_left", {512, 0, 32, 32}, 1, 1);
+	Animation bike_idle_right_animation = Animation("bike_idle_right", {544, 0, 32, 32}, 1, 1);
+
+	std::vector<AnimationFrame> bike_up_frames;
+	bike_up_frames.push_back(AnimationFrame({372, 0, 32, 32}, 100));
+	bike_up_frames.push_back(AnimationFrame({340, 0, 32, 32}, 100));
+	bike_up_frames.push_back(AnimationFrame({404, 0, 32, 32}, 100));
+	bike_up_frames.push_back(AnimationFrame({340, 0, 32, 32}, 100));
+	Animation bike_up_animation = Animation("bike_up", bike_up_frames, AnimationDirection::LOOP);
+
+	std::vector<AnimationFrame> bike_down_frames;
+	bike_down_frames.push_back(AnimationFrame({372, 32, 32, 32}, 100));
+	bike_down_frames.push_back(AnimationFrame({340, 32, 32, 32}, 100));
+	bike_down_frames.push_back(AnimationFrame({404, 32, 32, 32}, 100));
+	bike_down_frames.push_back(AnimationFrame({340, 32, 32, 32}, 100));
+	Animation bike_down_animation = Animation("bike_down", bike_down_frames, AnimationDirection::LOOP);
+
+	std::vector<AnimationFrame> bike_left_frames;
+	bike_left_frames.push_back(AnimationFrame({372, 64, 32, 32}, 100));
+	bike_left_frames.push_back(AnimationFrame({340, 64, 32, 32}, 100));
+	bike_left_frames.push_back(AnimationFrame({404, 64, 32, 32}, 100));
+	bike_left_frames.push_back(AnimationFrame({340, 64, 32, 32}, 100));
+	Animation bike_left_animation = Animation("bike_left", bike_left_frames, AnimationDirection::LOOP);
+
+	std::vector<AnimationFrame> bike_right_frames;
+	bike_right_frames.push_back(AnimationFrame({372, 96, 32, 32}, 100));
+	bike_right_frames.push_back(AnimationFrame({340, 96, 32, 32}, 100));
+	bike_right_frames.push_back(AnimationFrame({404, 96, 32, 32}, 100));
+	bike_right_frames.push_back(AnimationFrame({340, 96, 32, 32}, 100));
+	Animation bike_right_animation = Animation("bike_right", bike_right_frames, AnimationDirection::LOOP);
+
 	_player->get_animation_controller().add_animation("idle_up", idle_up_animation);
 	_player->get_animation_controller().add_animation("idle_down", idle_down_animation);
 	_player->get_animation_controller().add_animation("idle_left", idle_left_animation);
@@ -229,6 +266,16 @@ bool Application::init_entities() {
 	_player->get_animation_controller().add_animation("run_down", run_down_animation);
 	_player->get_animation_controller().add_animation("run_left", run_left_animation);
 	_player->get_animation_controller().add_animation("run_right", run_right_animation);
+
+	_player->get_animation_controller().add_animation("bike_idle_up", bike_idle_up_animation);
+	_player->get_animation_controller().add_animation("bike_idle_down", bike_idle_down_animation);
+	_player->get_animation_controller().add_animation("bike_idle_left", bike_idle_left_animation);
+	_player->get_animation_controller().add_animation("bike_idle_right", bike_idle_right_animation);
+
+	_player->get_animation_controller().add_animation("bike_up", bike_up_animation);
+	_player->get_animation_controller().add_animation("bike_down", bike_down_animation);
+	_player->get_animation_controller().add_animation("bike_left", bike_left_animation);
+	_player->get_animation_controller().add_animation("bike_right", bike_right_animation);
 
 	_player->get_animation_controller().play("idle_down");
 
@@ -251,6 +298,10 @@ void Application::on_loop_start() {
 void Application::handle_input() {
 	auto input_direction = InputHandler::get_key_direction();
 
+	if (InputHandler::is_key_pressed(SDLK_b)) {
+		_player->toggle_on_bike();
+	}
+
 	// set the player's direction
 	Direction player_direction = InputHandler::vector_to_direction(input_direction);
 	if (player_direction != Direction::NONE) _player->set_direction(player_direction);
@@ -259,6 +310,15 @@ void Application::handle_input() {
 	    input_direction.magnitude() > 0.1f ? InputHandler::is_key_down(SDLK_LSHIFT) ? "run_" : "walk_" : "idle_";
 
 	float speed = InputHandler::is_key_down(SDLK_LSHIFT) ? 250.f : 150.f;
+
+	if (_player->get_on_bike()) {
+		if (animation_prefix == "idle_")
+			animation_prefix = "bike_idle_";
+		else
+			animation_prefix = "bike_";
+
+		speed = 500.f;
+	}
 
 	if (input_direction.magnitude() > 0.1f) {
 		_player->get_animation_controller().play(
@@ -305,7 +365,7 @@ void Application::update_delta_time() {
 }
 
 void Application::update() {
-	for (auto &sprite : _sprites) {
+	for (auto &sprite : _entities) {
 		sprite->update(_delta_time);
 	}
 
@@ -323,7 +383,7 @@ void Application::render() {
 	render_background();
 	_player->render(_renderer.get());
 
-	for (auto &sprite : _sprites) {
+	for (auto &sprite : _entities) {
 		sprite->render(_renderer.get());
 	}
 

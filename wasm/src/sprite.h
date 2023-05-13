@@ -9,6 +9,7 @@ class Sprite {
 	Sprite(SDL_Texture& texture, const SDL_Rect& frame_rect, const SDL_Rect& world_rect);
 	Sprite(SDL_Texture& texture, const SDL_Rect& frame_rect, int x, int y, int w, int h);
 	Sprite(const Sprite& other);
+	virtual ~Sprite() = default;
 
 	virtual void render(SDL_Renderer* renderer);
 	virtual void update(float delta_time);

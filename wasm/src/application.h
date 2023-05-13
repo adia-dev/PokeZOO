@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sprite.h"
+#include "character.h"
 
 #ifdef __EMSCRIPTEN__
 #	include <emscripten.h>
@@ -33,7 +33,7 @@ class Application {
 	static SDL_Window   *get_window() { return instance()->_window.get(); }
 	static SDL_Renderer *get_renderer() { return instance()->_renderer.get(); }
 
-	static std::vector<std::unique_ptr<Sprite>> &get_entities() { return instance()->_sprites; }
+	static std::vector<std::unique_ptr<Sprite>> &get_entities() { return instance()->_entities; }
 
 	static void add_entity(const Sprite &sprite);
 
@@ -120,6 +120,6 @@ class Application {
 	double                               _delta_time      = 0;
 	Uint64                               NOW              = SDL_GetPerformanceCounter();
 	Uint64                               LAST             = 0;
-	std::vector<std::unique_ptr<Sprite>> _sprites;
-	std::unique_ptr<Sprite>              _player = nullptr;
+	std::vector<std::unique_ptr<Sprite>> _entities;
+	std::unique_ptr<Character>           _player = nullptr;
 };
