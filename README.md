@@ -7,8 +7,6 @@ PokeZOO is a fun project that aims to create a virtual zoo made up of animated P
 The project is available to view at the following URL: https://pokezoo.fly.dev/
 
 Hosted by [Fly.io](https://fly.io/)
-
-local video from assets/demo/v1.0.0.mp4:
 ![PokeZOO Demo](assets/demo/v1.0.0.gif)
 
 ## Installation
