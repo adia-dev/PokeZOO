@@ -16,6 +16,21 @@ class Vector2 {
 	Vector2<T> operator*(const Vector2<T>& other) const { return Vector2<T>(x * other.x, y * other.y); }
 	Vector2<T> operator/(const Vector2<T>& other) const { return Vector2<T>(x / other.x, y / other.y); }
 
+	Vector2<T> operator+(T scalar) const { return Vector2<T>(x + scalar, y + scalar); }
+	Vector2<T> operator-(T scalar) const { return Vector2<T>(x - scalar, y - scalar); }
+	Vector2<T> operator*(T scalar) const { return Vector2<T>(x * scalar, y * scalar); }
+	Vector2<T> operator/(T scalar) const { return Vector2<T>(x / scalar, y / scalar); }
+
+	Vector2<T> operator+=(const Vector2<T>& other) { return *this = *this + other; }
+	Vector2<T> operator-=(const Vector2<T>& other) { return *this = *this - other; }
+	Vector2<T> operator*=(const Vector2<T>& other) { return *this = *this * other; }
+	Vector2<T> operator/=(const Vector2<T>& other) { return *this = *this / other; }
+
+	Vector2<T> operator+=(T scalar) { return *this = *this + scalar; }
+	Vector2<T> operator-=(T scalar) { return *this = *this - scalar; }
+	Vector2<T> operator*=(T scalar) { return *this = *this * scalar; }
+	Vector2<T> operator/=(T scalar) { return *this = *this / scalar; }
+
 	Vector2<T> normalized() const {
 		T mag = magnitude();
 		if (mag == 0.0f) return zero();
@@ -69,3 +84,8 @@ typedef Vector2<int>          Vector2i;
 typedef Vector2<unsigned int> Vector2u;
 typedef Vector2<float>        Vector2f;
 typedef Vector2<double>       Vector2d;
+
+template<typename T>
+T lerp(T a, T b, float t) {
+	return a + t * (b - a);
+}

@@ -7,6 +7,9 @@ set(MY_TOTAL_MEMORY "256MB" CACHE STRING "The total memory")
 set(MY_INITIAL_MEMORY "256MB" CACHE STRING "The initial memory")
 set(MY_ALLOW_MEMORY_GROWTH "1" CACHE STRING "Allow memory growth")
 
+# Set the tinyxml2 include directory
+set(TINYXML2_DIR include/tinyxml2)
+
 # Set the default output directory for the built files
 set(DEFAULT_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/../dist")
 
@@ -34,6 +37,8 @@ file(GLOB_RECURSE SOURCES
     ../src/*.cpp
     ../src/**/*.cpp
 )
+
+include_directories(${TINYXML2_DIR})
 
 # Create the executable
 add_executable(${OUTPUT_NAME} ${SOURCES})

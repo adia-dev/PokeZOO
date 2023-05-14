@@ -138,7 +138,7 @@ bool Application::init_entities() {
 		Sprite new_entity =
 		    Sprite(AssetManager::get_texture("../src/assets/images/spritesheets/pokemons/pokemons_4th_gen.png"),
 		           {start_x, 2272, CHARACTER_SIZE, CHARACTER_SIZE},
-		           {rand() % _window_width, rand() % _window_height, CHARACTER_SIZE, CHARACTER_SIZE});
+		           {rand() % _window_width, rand() % _window_height, 128, 128});
 
 		Animation idle = Animation("idle", {start_x, 2272, 64, 64}, 1, 8, AnimationDirection::LOOP, 100);
 		new_entity.get_animation_controller().add_animation("idle", idle);
@@ -151,105 +151,105 @@ bool Application::init_entities() {
 
 	_player =
 	    std::make_unique<Character>(Character(AssetManager::get_texture("../src/assets/images/characters_no_bg.png"),
-	                                          (SDL_Rect) {0, 0, TILE_SIZE, TILE_SIZE},
-	                                          (SDL_Rect) {0, 0, TILE_SIZE, TILE_SIZE}));
+	                                          (SDL_Rect) {0, 0, CHARACTER_SIZE, CHARACTER_SIZE},
+	                                          (SDL_Rect) {0, 0, CHARACTER_SIZE, CHARACTER_SIZE}));
 
-	Animation idle_up_animation    = Animation("idle_up", {0, 0, TILE_SIZE, TILE_SIZE}, 1, 1);
-	Animation idle_down_animation  = Animation("idle_down", {0, TILE_SIZE, TILE_SIZE, TILE_SIZE}, 1, 1);
-	Animation idle_left_animation  = Animation("idle_left", {0, 64, TILE_SIZE, TILE_SIZE}, 1, 1);
-	Animation idle_right_animation = Animation("idle_right", {0, 96, TILE_SIZE, TILE_SIZE}, 1, 1);
+	Animation idle_up_animation    = Animation("idle_up", {0, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 1, 1);
+	Animation idle_down_animation  = Animation("idle_down", {0, CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE}, 1, 1);
+	Animation idle_left_animation  = Animation("idle_left", {0, 64, CHARACTER_SIZE, CHARACTER_SIZE}, 1, 1);
+	Animation idle_right_animation = Animation("idle_right", {0, 96, CHARACTER_SIZE, CHARACTER_SIZE}, 1, 1);
 
 	// WALK
 	std::vector<AnimationFrame> walk_up_frames;
-	walk_up_frames.push_back(AnimationFrame({TILE_SIZE, 0, TILE_SIZE, TILE_SIZE}, 100));
-	walk_up_frames.push_back(AnimationFrame({0, 0, TILE_SIZE, TILE_SIZE}, 100));
-	walk_up_frames.push_back(AnimationFrame({64, 0, TILE_SIZE, TILE_SIZE}, 100));
-	walk_up_frames.push_back(AnimationFrame({0, 0, TILE_SIZE, TILE_SIZE}, 100));
+	walk_up_frames.push_back(AnimationFrame({CHARACTER_SIZE, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	walk_up_frames.push_back(AnimationFrame({0, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	walk_up_frames.push_back(AnimationFrame({64, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	walk_up_frames.push_back(AnimationFrame({0, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
 	Animation walk_up_animation = Animation("walk_up", walk_up_frames, AnimationDirection::LOOP);
 
 	std::vector<AnimationFrame> walk_down_frames;
-	walk_down_frames.push_back(AnimationFrame({TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE}, 100));
-	walk_down_frames.push_back(AnimationFrame({0, TILE_SIZE, TILE_SIZE, TILE_SIZE}, 100));
-	walk_down_frames.push_back(AnimationFrame({64, TILE_SIZE, TILE_SIZE, TILE_SIZE}, 100));
-	walk_down_frames.push_back(AnimationFrame({0, TILE_SIZE, TILE_SIZE, TILE_SIZE}, 100));
+	walk_down_frames.push_back(AnimationFrame({CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	walk_down_frames.push_back(AnimationFrame({0, CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	walk_down_frames.push_back(AnimationFrame({64, CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	walk_down_frames.push_back(AnimationFrame({0, CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
 	Animation walk_down_animation = Animation("walk_down", walk_down_frames, AnimationDirection::LOOP);
 
 	std::vector<AnimationFrame> walk_left_frames;
-	walk_left_frames.push_back(AnimationFrame({TILE_SIZE, 64, TILE_SIZE, TILE_SIZE}, 100));
-	walk_left_frames.push_back(AnimationFrame({0, 64, TILE_SIZE, TILE_SIZE}, 100));
-	walk_left_frames.push_back(AnimationFrame({64, 64, TILE_SIZE, TILE_SIZE}, 100));
-	walk_left_frames.push_back(AnimationFrame({0, 64, TILE_SIZE, TILE_SIZE}, 100));
+	walk_left_frames.push_back(AnimationFrame({CHARACTER_SIZE, 64, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	walk_left_frames.push_back(AnimationFrame({0, 64, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	walk_left_frames.push_back(AnimationFrame({64, 64, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	walk_left_frames.push_back(AnimationFrame({0, 64, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
 	Animation walk_left_animation = Animation("walk_left", walk_left_frames, AnimationDirection::LOOP);
 
 	std::vector<AnimationFrame> walk_right_frames;
-	walk_right_frames.push_back(AnimationFrame({TILE_SIZE, 96, TILE_SIZE, TILE_SIZE}, 100));
-	walk_right_frames.push_back(AnimationFrame({0, 96, TILE_SIZE, TILE_SIZE}, 100));
-	walk_right_frames.push_back(AnimationFrame({64, 96, TILE_SIZE, TILE_SIZE}, 100));
-	walk_right_frames.push_back(AnimationFrame({0, 96, TILE_SIZE, TILE_SIZE}, 100));
+	walk_right_frames.push_back(AnimationFrame({CHARACTER_SIZE, 96, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	walk_right_frames.push_back(AnimationFrame({0, 96, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	walk_right_frames.push_back(AnimationFrame({64, 96, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	walk_right_frames.push_back(AnimationFrame({0, 96, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
 	Animation walk_right_animation = Animation("walk_right", walk_right_frames, AnimationDirection::LOOP);
 
 	// RUN
 	std::vector<AnimationFrame> run_up_frames;
-	run_up_frames.push_back(AnimationFrame({140, 0, TILE_SIZE, TILE_SIZE}, 100));
-	run_up_frames.push_back(AnimationFrame({108, 0, TILE_SIZE, TILE_SIZE}, 100));
-	run_up_frames.push_back(AnimationFrame({172, 0, TILE_SIZE, TILE_SIZE}, 100));
-	run_up_frames.push_back(AnimationFrame({108, 0, TILE_SIZE, TILE_SIZE}, 100));
+	run_up_frames.push_back(AnimationFrame({140, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	run_up_frames.push_back(AnimationFrame({108, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	run_up_frames.push_back(AnimationFrame({172, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	run_up_frames.push_back(AnimationFrame({108, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
 	Animation run_up_animation = Animation("run_up", run_up_frames, AnimationDirection::LOOP);
 
 	std::vector<AnimationFrame> run_down_frames;
-	run_down_frames.push_back(AnimationFrame({140, TILE_SIZE, TILE_SIZE, TILE_SIZE}, 100));
-	run_down_frames.push_back(AnimationFrame({108, TILE_SIZE, TILE_SIZE, TILE_SIZE}, 100));
-	run_down_frames.push_back(AnimationFrame({172, TILE_SIZE, TILE_SIZE, TILE_SIZE}, 100));
-	run_down_frames.push_back(AnimationFrame({108, TILE_SIZE, TILE_SIZE, TILE_SIZE}, 100));
+	run_down_frames.push_back(AnimationFrame({140, CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	run_down_frames.push_back(AnimationFrame({108, CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	run_down_frames.push_back(AnimationFrame({172, CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	run_down_frames.push_back(AnimationFrame({108, CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
 	Animation run_down_animation = Animation("run_down", run_down_frames, AnimationDirection::LOOP);
 
 	std::vector<AnimationFrame> run_left_frames;
-	run_left_frames.push_back(AnimationFrame({140, 64, TILE_SIZE, TILE_SIZE}, 100));
-	run_left_frames.push_back(AnimationFrame({108, 64, TILE_SIZE, TILE_SIZE}, 100));
-	run_left_frames.push_back(AnimationFrame({172, 64, TILE_SIZE, TILE_SIZE}, 100));
-	run_left_frames.push_back(AnimationFrame({108, 64, TILE_SIZE, TILE_SIZE}, 100));
+	run_left_frames.push_back(AnimationFrame({140, 64, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	run_left_frames.push_back(AnimationFrame({108, 64, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	run_left_frames.push_back(AnimationFrame({172, 64, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	run_left_frames.push_back(AnimationFrame({108, 64, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
 	Animation run_left_animation = Animation("run_left", run_left_frames, AnimationDirection::LOOP);
 
 	std::vector<AnimationFrame> run_right_frames;
-	run_right_frames.push_back(AnimationFrame({140, 96, TILE_SIZE, TILE_SIZE}, 100));
-	run_right_frames.push_back(AnimationFrame({108, 96, TILE_SIZE, TILE_SIZE}, 100));
-	run_right_frames.push_back(AnimationFrame({172, 96, TILE_SIZE, TILE_SIZE}, 100));
-	run_right_frames.push_back(AnimationFrame({108, 96, TILE_SIZE, TILE_SIZE}, 100));
+	run_right_frames.push_back(AnimationFrame({140, 96, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	run_right_frames.push_back(AnimationFrame({108, 96, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	run_right_frames.push_back(AnimationFrame({172, 96, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	run_right_frames.push_back(AnimationFrame({108, 96, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
 	Animation run_right_animation = Animation("run_right", run_right_frames, AnimationDirection::LOOP);
 
 	// BIKE
 
-	Animation bike_idle_up_animation    = Animation("bike_idle_up", {448, 0, TILE_SIZE, TILE_SIZE}, 1, 1);
-	Animation bike_idle_down_animation  = Animation("bike_idle_down", {480, 0, TILE_SIZE, TILE_SIZE}, 1, 1);
-	Animation bike_idle_left_animation  = Animation("bike_idle_left", {512, 0, TILE_SIZE, TILE_SIZE}, 1, 1);
-	Animation bike_idle_right_animation = Animation("bike_idle_right", {544, 0, TILE_SIZE, TILE_SIZE}, 1, 1);
+	Animation bike_idle_up_animation    = Animation("bike_idle_up", {448, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 1, 1);
+	Animation bike_idle_down_animation  = Animation("bike_idle_down", {480, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 1, 1);
+	Animation bike_idle_left_animation  = Animation("bike_idle_left", {512, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 1, 1);
+	Animation bike_idle_right_animation = Animation("bike_idle_right", {544, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 1, 1);
 
 	std::vector<AnimationFrame> bike_up_frames;
-	bike_up_frames.push_back(AnimationFrame({372, 0, TILE_SIZE, TILE_SIZE}, 100));
-	bike_up_frames.push_back(AnimationFrame({340, 0, TILE_SIZE, TILE_SIZE}, 100));
-	bike_up_frames.push_back(AnimationFrame({404, 0, TILE_SIZE, TILE_SIZE}, 100));
-	bike_up_frames.push_back(AnimationFrame({340, 0, TILE_SIZE, TILE_SIZE}, 100));
+	bike_up_frames.push_back(AnimationFrame({372, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	bike_up_frames.push_back(AnimationFrame({340, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	bike_up_frames.push_back(AnimationFrame({404, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	bike_up_frames.push_back(AnimationFrame({340, 0, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
 	Animation bike_up_animation = Animation("bike_up", bike_up_frames, AnimationDirection::LOOP);
 
 	std::vector<AnimationFrame> bike_down_frames;
-	bike_down_frames.push_back(AnimationFrame({372, TILE_SIZE, TILE_SIZE, TILE_SIZE}, 100));
-	bike_down_frames.push_back(AnimationFrame({340, TILE_SIZE, TILE_SIZE, TILE_SIZE}, 100));
-	bike_down_frames.push_back(AnimationFrame({404, TILE_SIZE, TILE_SIZE, TILE_SIZE}, 100));
-	bike_down_frames.push_back(AnimationFrame({340, TILE_SIZE, TILE_SIZE, TILE_SIZE}, 100));
+	bike_down_frames.push_back(AnimationFrame({372, CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	bike_down_frames.push_back(AnimationFrame({340, CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	bike_down_frames.push_back(AnimationFrame({404, CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	bike_down_frames.push_back(AnimationFrame({340, CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
 	Animation bike_down_animation = Animation("bike_down", bike_down_frames, AnimationDirection::LOOP);
 
 	std::vector<AnimationFrame> bike_left_frames;
-	bike_left_frames.push_back(AnimationFrame({372, 64, TILE_SIZE, TILE_SIZE}, 100));
-	bike_left_frames.push_back(AnimationFrame({340, 64, TILE_SIZE, TILE_SIZE}, 100));
-	bike_left_frames.push_back(AnimationFrame({404, 64, TILE_SIZE, TILE_SIZE}, 100));
-	bike_left_frames.push_back(AnimationFrame({340, 64, TILE_SIZE, TILE_SIZE}, 100));
+	bike_left_frames.push_back(AnimationFrame({372, 64, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	bike_left_frames.push_back(AnimationFrame({340, 64, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	bike_left_frames.push_back(AnimationFrame({404, 64, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	bike_left_frames.push_back(AnimationFrame({340, 64, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
 	Animation bike_left_animation = Animation("bike_left", bike_left_frames, AnimationDirection::LOOP);
 
 	std::vector<AnimationFrame> bike_right_frames;
-	bike_right_frames.push_back(AnimationFrame({372, 96, TILE_SIZE, TILE_SIZE}, 100));
-	bike_right_frames.push_back(AnimationFrame({340, 96, TILE_SIZE, TILE_SIZE}, 100));
-	bike_right_frames.push_back(AnimationFrame({404, 96, TILE_SIZE, TILE_SIZE}, 100));
-	bike_right_frames.push_back(AnimationFrame({340, 96, TILE_SIZE, TILE_SIZE}, 100));
+	bike_right_frames.push_back(AnimationFrame({372, 96, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	bike_right_frames.push_back(AnimationFrame({340, 96, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	bike_right_frames.push_back(AnimationFrame({404, 96, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
+	bike_right_frames.push_back(AnimationFrame({340, 96, CHARACTER_SIZE, CHARACTER_SIZE}, 100));
 	Animation bike_right_animation = Animation("bike_right", bike_right_frames, AnimationDirection::LOOP);
 
 	_player->get_animation_controller().add_animation("idle_up", idle_up_animation);
@@ -368,10 +368,6 @@ void Application::update() {
 	for (auto &sprite : _entities) {
 		sprite->update(_delta_time);
 	}
-
-	SDL_GetWindowSize(_window.get(), &_window_width, &_window_height);
-
-	printf("Window Size: %d, %d\n", _window_width, _window_height);
 
 	_player->update(_delta_time);
 }

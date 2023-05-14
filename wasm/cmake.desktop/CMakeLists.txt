@@ -4,6 +4,10 @@ project(app)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE Debug)
 
+
+# Set the tinyxml2 include directory
+set(TINYXML2_DIR ../include/tinyxml2)
+
 # Find SDL2, SDL2_ttf, and SDL2_image libraries
 find_package(SDL2 REQUIRED)
 find_package(SDL2_ttf REQUIRED)
@@ -16,7 +20,7 @@ find_package(SDL2_image REQUIRED)
 file(GLOB_RECURSE SOURCE_FILES "../src/*.cpp")
 
 # Include directories for SDL2, SDL2_ttf, and SDL2_image
-include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
+include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${TINYXML2_DIR})
 
 # Add the executable target
 add_executable(app ${SOURCE_FILES})

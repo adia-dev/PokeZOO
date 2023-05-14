@@ -1,0 +1,23 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 0.75
+        }
+    },
+    "last.imagePath": "/Users/abdoulayedia/Projects/School/AL_2/NodeJS/PokeZOO/wasm/src/assets/images/spritesheets/map",
+    "map.height": 30,
+    "map.width": 50,
+    "openFiles": [
+    ],
+    "project": "zoo_1.tiled-project",
+    "recentFiles": [
+    ],
+    "tileset.embedInMap": true
+}
