@@ -61,7 +61,7 @@ class InputHandler {
 	static bool is_mouse_released(const MouseButton& button);
 
 	static Vector2f get_mouse_position();
-	static Vector2i get_mouse_coords(int cell_width = 32, int cell_height = 32);
+	static Vector2i get_mouse_coords(int cell_width = TILE_SIZE, int cell_height = TILE_SIZE);
 	static void     set_mouse_position(const Vector2f& position);
 	static void     set_mouse_position(float x, float y);
 

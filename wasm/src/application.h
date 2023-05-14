@@ -92,11 +92,11 @@ class Application {
 	bool is_running() const { return _running; }
 	void set_running(bool running) { _running = running; }
 
-	int  get_width() const { return _width; }
-	void set_width(int width) { _width = width; }
+	int  get_window_width() const { return _window_width; }
+	void set_window_width(int window_width) { _window_width = window_width; }
 
-	int  get_height() const { return _height; }
-	void set_height(int height) { _height = height; }
+	int  get_window_height() const { return _window_height; }
+	void set_window_height(int window_height) { _window_height = window_height; }
 
 	int  get_last_frame_time() const { return _last_frame_time; }
 	void set_last_frame_time(int last_frame_time) { _last_frame_time = last_frame_time; }
@@ -114,8 +114,8 @@ class Application {
 	 * Game state
 	 */
 	bool                                 _running         = false;
-	int                                  _width           = 1920;
-	int                                  _height          = 1080;
+	int                                  _window_width    = WINDOW_WIDTH;
+	int                                  _window_height   = WINDOW_HEIGHT;
 	double                               _last_frame_time = 0;
 	double                               _delta_time      = 0;
 	Uint64                               NOW              = SDL_GetPerformanceCounter();
